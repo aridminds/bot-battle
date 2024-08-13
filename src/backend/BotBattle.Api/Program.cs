@@ -2,6 +2,7 @@ using System.Text.Json;
 using BotBattle.Api.Matchmaking;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
+using BotBattle.Engine.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
@@ -51,12 +52,15 @@ app.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking match
     if (lobby == null)
         return Results.NotFound();
 
+    var map = MapGeneratorService.Generate(lobby.Width, lobby.Height);
+    
     return Results.Ok(new
     {
         name = lobby.ProcessId,
         width = lobby.Width,
         height = lobby.Height,
-        players = lobby.Players
+        players = lobby.Players,
+        mapTiles = map.Get1DArray()
     });
 });
 

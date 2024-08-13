@@ -27,7 +27,7 @@ public class MapGeneratorService
         {
             for (var x = 0; x < width; x++)
             {
-                var noseValue = noiseMap.Noise[y, x];
+                var noseValue = noiseMap.Noise[x, y];
                 var index = noiseMap.GetSegmetIndex(noseValue);
                 tiles[y, x] = (int)tilesTypes[index];
             }

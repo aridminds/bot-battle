@@ -9,7 +9,7 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 	import Arena from '$lib/components/arena.svelte';
-	import type { Lobby } from '$lib/types/lobby';
+	import { getTile, type Lobby } from '$lib/types/lobby';
 	import LobbyStats from '$lib/components/lobby-stats.svelte';
 	import { getApiPath } from '$lib/base-path';
 	import GroundTile from '$lib/components/ground-tile.svelte';
@@ -53,8 +53,7 @@
 				<Canvas {width} {height} pixelRatio="auto" class="bg-white">
 					{#each Array(lobby.height) as _, row}
 						{#each Array(lobby.width) as _, column}
-							<GroundTile {tileSize} tile={(column + row) % 2 === 0 ? 1 : 1} {column} {row}
-							></GroundTile>
+							<GroundTile {tileSize} tile={getTile(lobby.mapTiles, lobby.width, column, row)} {column} {row}></GroundTile>
 						{/each}
 					{/each}
 					{#each tanks as tank}

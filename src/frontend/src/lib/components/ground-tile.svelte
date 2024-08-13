@@ -12,7 +12,7 @@
 	export let row: number;
 
 	let atlas: CanvasImageSource;
-
+	const atlasTileSize = 64; 
 	// $: {
 	// 	console.log('tileSize', tileSize);
 	// 	console.log('tile', tile);
@@ -34,14 +34,15 @@
 		width: number;
 		height: number;
 	}) => {
-		let flooredTileSize = Math.floor(tileSize);
-		let ceiledTileSize = Math.ceil(tileSize);
+		const atlasColumn = (tile - 1) % 10;
+        const atlasRow = Math.floor((tile - 1) / 10);
+
 		context.drawImage(
 			atlas, // image
-			(tile - 1) * 64, // source x
-			0, // source y
-			64, // source width
-			64, // source height
+			atlasColumn * atlasTileSize, // source x
+            atlasRow * atlasTileSize, // source y
+			atlasTileSize, // source width
+			atlasTileSize, // source height
 			column * tileSize, // target x
 			row * tileSize, // target y
 			tileSize, // target width

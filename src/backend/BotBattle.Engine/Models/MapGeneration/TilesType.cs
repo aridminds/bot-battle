@@ -2,7 +2,7 @@
 
 public enum TilesType
 {
-    Water = 0,
+    Empty = 0,
     Grass = 1,
-    Sand = 2,
+    Sand = 21,
 }
