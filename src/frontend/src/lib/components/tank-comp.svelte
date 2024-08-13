@@ -9,6 +9,7 @@
 	import { TankStatus } from '$lib/types/tankStatus';
 
 	export let tank: Tank;
+	export let tileSize: number;
 	export let canvasWidth: number;
 	export let canvasHeight: number;
 	export let arenaWidth: number;
@@ -56,19 +57,21 @@
 				break;
 		}
 
+		let halfTileSize = tileSize / 2;
+
 		context.fillStyle = color;
-		context.fillText(tank.Name, xx + 15, yy - 20);
+		context.fillText(tank.Name, xx + halfTileSize, yy - 20);
 
 		context.font = `${14}px sans-serif`;
 		context.textAlign = 'center';
 		context.textBaseline = 'middle';
 		context.fillStyle = color;
-		context.fillText(tank.Health.toString(), xx + 15, yy - 35);
+		context.fillText(tank.Health.toString(), xx + halfTileSize, yy - 35);
 
 		context.save();
-		context.translate(xx + 15, yy + 15);
+		context.translate(xx + halfTileSize, yy + halfTileSize);
 		context.rotate(calculateRotationRadians(tank.Position, -90));
-		context.drawImage(logo, -15, -15, 30, 30);
+		context.drawImage(logo, -halfTileSize, -halfTileSize, tileSize, tileSize);
 		context.restore();
 	};
 </script>

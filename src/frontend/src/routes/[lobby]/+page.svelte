@@ -48,17 +48,19 @@
 	</div>
 {:then lobby}
 	<div class="grid grid-cols-3 h-full">
-		<div class="col-span-2 p-4 h-full">
+		<div class="col-span-2 p-4 h-full bg-black">
 			<Arena arenaHeight={lobby.height} arenaWidth={lobby.width} let:height let:width let:tileSize>
-				<Canvas {width} {height} class="border border-stone-700">
+				<Canvas {width} {height} pixelRatio="auto" class="bg-white">
 					{#each Array(lobby.height) as _, row}
 						{#each Array(lobby.width) as _, column}
-							<GroundTile {tileSize} tile={1} {column} {row}></GroundTile>
+							<GroundTile {tileSize} tile={(column + row) % 2 === 0 ? 1 : 1} {column} {row}
+							></GroundTile>
 						{/each}
 					{/each}
 					{#each tanks as tank}
 						<TankComp
 							{tank}
+							{tileSize}
 							canvasHeight={height}
 							canvasWidth={width}
 							arenaHeight={lobby.height}
@@ -68,6 +70,7 @@
 					{#each bullets as bullet}
 						<BulletComp
 							{bullet}
+							{tileSize}
 							canvasHeight={height}
 							canvasWidth={width}
 							arenaHeight={lobby.height}

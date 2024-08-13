@@ -22,7 +22,7 @@
 
 	onMount(() => {
 		atlas = new Image();
-		atlas.src = 'http://localhost:5173/terrainTiles_default.png';
+		atlas.src = 'terrainTiles_default.png';
 	});
 
 	const render = ({
@@ -34,6 +34,8 @@
 		width: number;
 		height: number;
 	}) => {
+		let flooredTileSize = Math.floor(tileSize);
+		let ceiledTileSize = Math.ceil(tileSize);
 		context.drawImage(
 			atlas, // image
 			(tile - 1) * 64, // source x

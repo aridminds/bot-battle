@@ -27,7 +27,7 @@ public class Matchmaking
 
         _pathToLobbyServerExecutable = configuration.GetValue<string>("PathToLobbyServerExecutable");
         _maximumConcurrentLobbies = configuration.GetValue<int>("MaximumConcurrentLobbies");
-        _arenaDimensions = configuration.GetValue<int[]>("ArenaDimensions") ?? [48, 27];
+        _arenaDimensions = configuration.GetValue<int[]>("ArenaDimensions") ?? [40, 20];
     }
 
     public Task QueueNewLobbies(CancellationToken cancellationToken)

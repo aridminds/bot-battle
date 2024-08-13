@@ -7,6 +7,7 @@
 	import type { Bullet } from '$lib/types/bullet';
 
 	export let bullet: Bullet;
+	export let tileSize: number;
 	export let canvasWidth: number;
 	export let canvasHeight: number;
 	export let arenaWidth: number;
@@ -38,7 +39,10 @@
 		position.set([x, y]);
 		const [xx, yy] = $position;
 
-		context.drawImage(logo, xx - 6, yy - 6, 12, 12);
+		let halfTileSize = tileSize / 2;
+		let bulletSize = tileSize / 4;
+
+		context.drawImage(logo, xx - halfTileSize, yy - halfTileSize, bulletSize, bulletSize);
 	};
 </script>
 
