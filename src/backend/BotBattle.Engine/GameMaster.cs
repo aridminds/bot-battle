@@ -1,4 +1,5 @@
 ﻿using BotBattle.Engine.Models;
+using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
 
 namespace BotBattle.Engine;
@@ -12,21 +13,27 @@ public class GameMaster
     public BoardState NextRound(string payloadHashString, BoardState boardState, Tank tank)
     {
         boardState.Bullets.Clear();
-        var tankAction = TankCalculator.CalculateNextAction(payloadHashString, boardState.Width, boardState.Height, BlastRadius);
+        var tankAction = TankCalculator.CalculateNextAction(payloadHashString);
         var currentTank = boardState.Tanks.First(t => t.Name == tank.Name);
         if (currentTank.Status == TankStatus.Dead) return boardState;
 
         currentTank.Position = MoveTank(tankAction.Rotation, currentTank.Position, boardState);
 
         if (tankAction.ShouldShoot)
-            ShootBullet(tankAction.Rotation, tankAction.ShootingRange, currentTank, boardState);
+        {
+            var shootingRange = TankCalculator.CalculateShootingRange(tankAction.RawShootingRange, BlastRadius,
+                boardState.Width, boardState.Height, currentTank.Position);
+            ShootBullet(tankAction.Rotation, shootingRange, currentTank, boardState);
+        }
+
+
         CalculateIsSomeoneHit(boardState.Tanks, boardState);
 
         CheckForWinner(boardState);
-        
+
         return boardState;
     }
-    
+
     public void CheckForWinner(BoardState boardState)
     {
         var alivePlayers = boardState.Tanks.Where(player => player.Status == TankStatus.Alive).ToList();
@@ -82,7 +89,8 @@ public class GameMaster
         }
 
         if (!bulletPosition.Equals(currentTank.Position))
-            boardState.Bullets.Add(new Bullet { Source = currentTank.Position, Target = bulletPosition, Shooter = currentTank});
+            boardState.Bullets.Add(new Bullet
+                { Source = currentTank.Position, Target = bulletPosition, Shooter = currentTank });
     }
 
 

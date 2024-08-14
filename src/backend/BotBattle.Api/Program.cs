@@ -53,7 +53,7 @@ app.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking match
         return Results.NotFound();
 
     var map = MapGeneratorService.Generate(lobby.Width, lobby.Height);
-    
+
     return Results.Ok(new
     {
         name = lobby.ProcessId,

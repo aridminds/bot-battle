@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using BotBattle.Engine;
 using BotBattle.Engine.Models;
+using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
 using Tank = BotBattle.Engine.Models.Tank;
 
@@ -29,10 +30,7 @@ public class Lobby
     {
         while (!ct.IsCancellationRequested)
         {
-            if (BoardState.Status == GameStatus.GameOver)
-            {
-                return;
-            }
+            if (BoardState.Status == GameStatus.GameOver) return;
 
             if (_currentTank.Status == TankStatus.Alive)
             {

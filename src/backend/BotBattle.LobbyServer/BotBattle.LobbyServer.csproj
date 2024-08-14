@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj" />
+        <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj"/>
     </ItemGroup>
 
 </Project>

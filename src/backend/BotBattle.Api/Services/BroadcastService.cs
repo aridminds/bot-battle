@@ -10,32 +10,9 @@ public interface ISubscription<S> : IDisposable
 
 public class BroadcastService<T>
 {
-    public sealed class Subscription<S> : ISubscription<S>
-    {
-        private bool _isDisposed;
-        private readonly Action<Subscription<S>> unregister;
-        public readonly Channel<S> channel;
-
-        public ChannelReader<S> Reader => channel.Reader;
-
-        public Subscription(Action<Subscription<S>> register, Action<Subscription<S>> unregister, Channel<S> channel)
-        {
-            register(this);
-            this.unregister = unregister;
-            this.channel = channel;
-        }
-
-        public void Dispose()
-        {
-            if (_isDisposed) return;
-            _isDisposed = true;
-            unregister(this);
-            channel.Writer.Complete();
-        }
-    }
+    private readonly object _lock = new();
 
     private ImmutableList<Subscription<T>> _subscriptions = [];
-    private readonly object _lock = new();
 
     private void RemoveSubscription(Subscription<T> sub)
     {
@@ -58,12 +35,36 @@ public class BroadcastService<T>
         await foreach (var msg in source.ReadAllAsync(ct).ConfigureAwait(false))
         {
             var subCopy = new List<Subscription<T>>(_subscriptions);
-            foreach (var item in subCopy)
-            {
-                await item.channel.Writer.WriteAsync(msg, ct);
-            }
+            foreach (var item in subCopy) await item.channel.Writer.WriteAsync(msg, ct);
         }
     }
 
-    public ISubscription<T> RegisterOutboundChannel() => new Subscription<T>(AddSubscription, RemoveSubscription, Channel.CreateUnbounded<T>());
+    public ISubscription<T> RegisterOutboundChannel()
+    {
+        return new Subscription<T>(AddSubscription, RemoveSubscription, Channel.CreateUnbounded<T>());
+    }
+
+    public sealed class Subscription<S> : ISubscription<S>
+    {
+        public readonly Channel<S> channel;
+        private readonly Action<Subscription<S>> unregister;
+        private bool _isDisposed;
+
+        public Subscription(Action<Subscription<S>> register, Action<Subscription<S>> unregister, Channel<S> channel)
+        {
+            register(this);
+            this.unregister = unregister;
+            this.channel = channel;
+        }
+
+        public ChannelReader<S> Reader => channel.Reader;
+
+        public void Dispose()
+        {
+            if (_isDisposed) return;
+            _isDisposed = true;
+            unregister(this);
+            channel.Writer.Complete();
+        }
+    }
 }

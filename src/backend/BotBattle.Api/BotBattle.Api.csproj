@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj" />
+        <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -15,26 +15,26 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\" />
+        <Folder Include="wwwroot\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\_app\env.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\assets\0.CU1UyDxP.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\assets\_layout.CU1UyDxP.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\base-path.COvxTtSv.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\entry.DKxWcK-F.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\index.BLjGaC5q.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\index.BRn-Xd7e.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\scheduler.B-TRBR6R.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\stores.BT-4q8Z3.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\entry\app.DQpk3G7K.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\entry\start.C1j3_sc_.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\0.CQVa24yH.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\1.BCMd-Pfs.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\2.wesO22OW.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\3.2TMb3FQO.js" />
-      <_ContentIncludedByDefault Remove="wwwroot\_app\version.json" />
+        <_ContentIncludedByDefault Remove="wwwroot\_app\env.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\assets\0.CU1UyDxP.css"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\assets\_layout.CU1UyDxP.css"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\base-path.COvxTtSv.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\entry.DKxWcK-F.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\index.BLjGaC5q.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\index.BRn-Xd7e.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\scheduler.B-TRBR6R.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\chunks\stores.BT-4q8Z3.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\entry\app.DQpk3G7K.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\entry\start.C1j3_sc_.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\0.CQVa24yH.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\1.BCMd-Pfs.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\2.wesO22OW.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\immutable\nodes\3.2TMb3FQO.js"/>
+        <_ContentIncludedByDefault Remove="wwwroot\_app\version.json"/>
     </ItemGroup>
 
 </Project>

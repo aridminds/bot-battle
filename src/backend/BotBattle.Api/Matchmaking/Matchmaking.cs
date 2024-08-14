@@ -8,9 +8,9 @@ namespace BotBattle.Api.Matchmaking;
 public class Matchmaking
 {
     private readonly int[] _arenaDimensions;
+    private readonly BroadcastService<BoardState> _broadcastService;
     private readonly IConfiguration _configuration;
     private readonly ConcurrentBag<LobbyProcess> _currentLobbies = [];
-    private readonly BroadcastService<BoardState> _broadcastService;
 
     private readonly ILogger<Matchmaking> _logger;
     private readonly int _maximumConcurrentLobbies;
@@ -18,7 +18,8 @@ public class Matchmaking
     private readonly string _pathToLobbyServerExecutable;
     private ConcurrentStack<string> _availablePlayers;
 
-    public Matchmaking(HashSet<string> availablePlayers, BroadcastService<BoardState> broadcastService, ILogger<Matchmaking> logger, IConfiguration configuration)
+    public Matchmaking(HashSet<string> availablePlayers, BroadcastService<BoardState> broadcastService,
+        ILogger<Matchmaking> logger, IConfiguration configuration)
     {
         _broadcastService = broadcastService;
         _logger = logger;

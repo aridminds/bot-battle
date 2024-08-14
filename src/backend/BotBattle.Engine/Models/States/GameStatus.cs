@@ -1,4 +1,4 @@
-﻿namespace BotBattle.Engine.Models;
+﻿namespace BotBattle.Engine.Models.States;
 
 public enum GameStatus
 {

@@ -1,8 +1,8 @@
-﻿namespace BotBattle.Engine.MapGenerator.Models;
+﻿namespace BotBattle.Engine.Models;
 
 public enum StreetTypes
 {
-    Ground = 0,    
+    Ground = 0,
     StraightHorizontal = 1,
     StraightVertical = 2,
     CornerTopLeft = 3,
@@ -10,5 +10,5 @@ public enum StreetTypes
     CornerBottomLeft = 5,
     CornerBottomRight = 6,
     Cross = 7,
-    Rock = 100,
+    Rock = 100
 }

@@ -1,4 +1,6 @@
-﻿namespace BotBattle.Engine.Models;
+﻿using BotBattle.Engine.Models.States;
+
+namespace BotBattle.Engine.Models;
 
 public class Position(int x, int y)
 {
@@ -13,5 +15,10 @@ public class Position(int x, int y)
         if (X != position.X) return false;
         if (Y != position.Y) return false;
         return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y, (int)Direction);
     }
 }

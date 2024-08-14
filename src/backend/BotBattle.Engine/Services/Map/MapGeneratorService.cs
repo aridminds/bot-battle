@@ -13,24 +13,22 @@ public class MapGeneratorService
             TilesType.Grass,
             TilesType.Sand
         });
-        
+
         return new Models.Map(tiles);
     }
-    
+
     public static int[,] GenerateMapWithNoise(int width, int height, List<TilesType> tilesTypes)
     {
         var noiseMap = NoiseService.GenerateNoiseMap(width, height, tilesTypes.Count);
-        
+
         var tiles = new int[height, width];
-        
+
         for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
         {
-            for (var x = 0; x < width; x++)
-            {
-                var noseValue = noiseMap.Noise[x, y];
-                var index = noiseMap.GetSegmetIndex(noseValue);
-                tiles[y, x] = (int)tilesTypes[index];
-            }
+            var noseValue = noiseMap.Noise[x, y];
+            var index = noiseMap.GetSegmetIndex(noseValue);
+            tiles[y, x] = (int)tilesTypes[index];
         }
 
         return tiles;

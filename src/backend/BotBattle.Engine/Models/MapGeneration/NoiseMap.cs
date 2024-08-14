@@ -2,7 +2,7 @@
 
 public class NoiseMap
 {
-    public NoiseMap(float[,] noise,  List<NoiseSegment> segments)
+    public NoiseMap(float[,] noise, List<NoiseSegment> segments)
     {
         Noise = noise;
         Segments = segments;
@@ -13,14 +13,10 @@ public class NoiseMap
 
     public int GetSegmetIndex(float value)
     {
-        for (int i = 0; i < Segments.Count; i++)
-        {
-            if(Segments[i].Min <= value && value <= Segments[i].Max)
-            {
+        for (var i = 0; i < Segments.Count; i++)
+            if (Segments[i].Min <= value && value <= Segments[i].Max)
                 return i;
-            }
-        }
-        
+
         throw new IndexOutOfRangeException("Value is out of range.");
     }
 }

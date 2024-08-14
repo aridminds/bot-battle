@@ -1,4 +1,6 @@
-﻿namespace BotBattle.Engine.Models;
+﻿using BotBattle.Engine.Models.States;
+
+namespace BotBattle.Engine.Models;
 
 public class BoardState
 {
@@ -6,7 +8,6 @@ public class BoardState
     {
         Width = width;
         Height = height;
-        // Map = MapGeneratorService.Generate(width, height);
     }
 
     public int Width { get; init; }
@@ -14,5 +15,4 @@ public class BoardState
     public List<Tank> Tanks { get; init; } = [];
     public List<Bullet> Bullets { get; init; } = [];
     public GameStatus Status { get; set; } = GameStatus.InProgress;
-    // public Map Map { get; set; }
 }

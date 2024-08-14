@@ -13,13 +13,13 @@ public static class NoiseService
         var segments = CalculateSegments(noise, segmentsCount);
         return new NoiseMap(noise, segments);
     }
-    
+
     public static List<NoiseSegment> GenerateSegments(int width, int height, int segmentsCount)
     {
         var noise = GenerateNoise(width, height);
         return CalculateSegments(noise, segmentsCount);
     }
-    
+
     public static float[,] GenerateNoise(int width, int height)
     {
         return Noise.Calc2D(width, height, Scale); // Returns an array containing 2D Simplex noise
@@ -28,7 +28,7 @@ public static class NoiseService
     public static List<NoiseSegment> CalculateSegments(float[,] values, int segmentsCount)
     {
         var allValues = new List<float>();
-       
+
         foreach (var value in values) allValues.Add(value);
         allValues.Sort();
 

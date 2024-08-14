@@ -1,4 +1,6 @@
-﻿namespace BotBattle.Engine.Models;
+﻿using BotBattle.Engine.Models.States;
+
+namespace BotBattle.Engine.Models;
 
 public class Tank
 {
