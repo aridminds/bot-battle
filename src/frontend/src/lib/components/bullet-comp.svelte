@@ -21,7 +21,10 @@
 	});
 
 	const position = tweened(
-		[bullet.Source.X * (canvasHeight / arenaHeight), bullet.Source.Y * (canvasWidth / arenaWidth)],
+		[
+			bullet.Shooter.Position.X * (canvasHeight / arenaHeight),
+			bullet.Shooter.Position.Y * (canvasWidth / arenaWidth)
+		],
 		{ duration: 100, easing }
 	);
 
@@ -34,8 +37,8 @@
 		width: number;
 		height: number;
 	}) => {
-		const x = bullet.Target.X * (width / arenaWidth);
-		const y = bullet.Target.Y * (height / arenaHeight);
+		const x = bullet.CurrentPosition.X * (width / arenaWidth);
+		const y = bullet.CurrentPosition.Y * (height / arenaHeight);
 		position.set([x, y]);
 		const [xx, yy] = $position;
 

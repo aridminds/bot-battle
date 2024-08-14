@@ -12,7 +12,32 @@ public class GameMaster
 
     public BoardState NextRound(string payloadHashString, BoardState boardState, Tank tank)
     {
-        boardState.Bullets.Clear();
+        for (var index = 0; index < boardState.Bullets.Count; index++)
+        {
+            var bullet = boardState.Bullets[index];
+
+            if (IsSomeoneHit(boardState.Tanks, bullet))
+            {
+                boardState.Bullets.RemoveAt(index);
+                continue;
+            }
+            
+            switch (bullet.ShootingRange)
+            {
+                case 0:
+                    bullet.ShootingRange--;
+                    bullet.Status = BulletStatus.Hit;
+                    break;
+                case < 0:
+                    boardState.Bullets.RemoveAt(index);
+                    break;
+                default:
+                    bullet.CurrentPosition = CalculateNewPosition(bullet.CurrentPosition, bullet.CurrentPosition.Direction);
+                    bullet.ShootingRange--;
+                    break;
+            }
+        }
+        
         var tankAction = TankCalculator.CalculateNextAction(payloadHashString);
         var currentTank = boardState.Tanks.First(t => t.Name == tank.Name);
         if (currentTank.Status == TankStatus.Dead) return boardState;
@@ -33,7 +58,7 @@ public class GameMaster
 
         return boardState;
     }
-
+    
     public void CheckForWinner(BoardState boardState)
     {
         var alivePlayers = boardState.Tanks.Where(player => player.Status == TankStatus.Alive).ToList();
@@ -46,6 +71,30 @@ public class GameMaster
         }
     }
 
+    private bool IsSomeoneHit(List<Tank> players, Bullet bullet)
+    {
+        var isHit = false;
+        foreach (var player in players)
+        {
+            if (player.Status == TankStatus.Dead) continue;
+            if(player == bullet.Shooter) continue;
+            if (bullet.CurrentPosition.Equals(player.Position))
+            {
+                isHit = true;
+                bullet.Status = BulletStatus.Hit;
+                bullet.ShootingRange = -1;
+                player.Health -= FullBulletHit;
+            }
+             
+            if (player.Health > 0) continue;
+
+            player.Status = TankStatus.Dead;
+            player.Health = 0;
+        }
+
+        return isHit;
+    }
+    
     private void CalculateIsSomeoneHit(List<Tank> players, BoardState boardState)
     {
         foreach (var player in players)
@@ -53,7 +102,8 @@ public class GameMaster
             if (player.Status == TankStatus.Dead) continue;
             foreach (var bullet in boardState.Bullets)
             {
-                var distance = CalculateDistance(bullet.Target, player.Position);
+                if(bullet.Status != BulletStatus.Hit) continue;
+                var distance = CalculateDistance(bullet.CurrentPosition, player.Position);
                 if (!(distance <= BlastRadius)) continue;
                 var healthReduction = CalculateHealthReduction(distance);
                 player.Health -= healthReduction;
@@ -90,7 +140,7 @@ public class GameMaster
 
         if (!bulletPosition.Equals(currentTank.Position))
             boardState.Bullets.Add(new Bullet
-                { Source = currentTank.Position, Target = bulletPosition, Shooter = currentTank });
+                { Id = $"{currentTank.Name}-{Guid.NewGuid()}", Shooter = currentTank, CurrentPosition = currentTank.Position, ShootingRange = shootingRange});
     }
 
 
@@ -112,14 +162,14 @@ public class GameMaster
     {
         return direction switch
         {
-            Direction.North => new Position(currentPosition.X, currentPosition.Y - 1),
-            Direction.NorthEast => new Position(currentPosition.X + 1, currentPosition.Y - 1),
-            Direction.East => new Position(currentPosition.X + 1, currentPosition.Y),
-            Direction.SouthEast => new Position(currentPosition.X + 1, currentPosition.Y + 1),
-            Direction.South => new Position(currentPosition.X, currentPosition.Y + 1),
-            Direction.SouthWest => new Position(currentPosition.X - 1, currentPosition.Y + 1),
-            Direction.West => new Position(currentPosition.X - 1, currentPosition.Y),
-            Direction.NorthWest => new Position(currentPosition.X - 1, currentPosition.Y - 1),
+            Direction.North => new Position(currentPosition.X, currentPosition.Y - 1, direction),
+            Direction.NorthEast => new Position(currentPosition.X + 1, currentPosition.Y - 1, direction),
+            Direction.East => new Position(currentPosition.X + 1, currentPosition.Y, direction),
+            Direction.SouthEast => new Position(currentPosition.X + 1, currentPosition.Y + 1, direction),
+            Direction.South => new Position(currentPosition.X, currentPosition.Y + 1, direction),
+            Direction.SouthWest => new Position(currentPosition.X - 1, currentPosition.Y + 1, direction),
+            Direction.West => new Position(currentPosition.X - 1, currentPosition.Y, direction),
+            Direction.NorthWest => new Position(currentPosition.X - 1, currentPosition.Y - 1, direction),
             _ => currentPosition
         };
     }
