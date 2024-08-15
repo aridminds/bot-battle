@@ -1,7 +1,7 @@
 import type { Bullet } from './bullet';
+import type { EventLog } from './eventLog';
 import type { GameStatus } from './gameStatus';
 import type { Tank } from './tank';
-import type { Map } from './map';
 
 export type BoardState = {
 	Width: number;
@@ -9,5 +9,6 @@ export type BoardState = {
 	Tanks: Tank[];
 	Bullets: Bullet[];
 	Status: GameStatus;
-	Map: Map;
+	EventLogs: EventLog[];
+	Turns: number;
 };

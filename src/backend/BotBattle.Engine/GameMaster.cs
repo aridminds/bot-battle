@@ -12,11 +12,12 @@ public class GameMaster
 
     public BoardState NextRound(string payloadHashString, BoardState boardState, Tank tank)
     {
+        boardState.Turns++;
         for (var index = 0; index < boardState.Bullets.Count; index++)
         {
             var bullet = boardState.Bullets[index];
 
-            if (IsSomeoneHit(boardState.Tanks, bullet))
+            if (IsSomeoneHit(boardState, bullet))
             {
                 boardState.Bullets.RemoveAt(index);
                 continue;
@@ -53,7 +54,6 @@ public class GameMaster
 
 
         CalculateIsSomeoneHit(boardState.Tanks, boardState);
-
         CheckForWinner(boardState);
 
         return boardState;
@@ -68,13 +68,14 @@ public class GameMaster
             var winner = alivePlayers.First();
             winner.Status = TankStatus.Winner;
             boardState.Status = GameStatus.GameOver;
+            boardState.EventLogs.Add(EventLogExtensions.CreateHasWonEventLog(boardState.Turns, winner));
         }
     }
 
-    private bool IsSomeoneHit(List<Tank> players, Bullet bullet)
+    private bool IsSomeoneHit(BoardState boardState, Bullet bullet)
     {
         var isHit = false;
-        foreach (var player in players)
+        foreach (var player in boardState.Tanks)
         {
             if (player.Status == TankStatus.Dead) continue;
             if(player == bullet.Shooter) continue;
@@ -84,12 +85,18 @@ public class GameMaster
                 bullet.Status = BulletStatus.Hit;
                 bullet.ShootingRange = -1;
                 player.Health -= FullBulletHit;
+                
+                if(player.Health <= 0)
+                {
+                    player.Status = TankStatus.Dead;
+                    player.Health = 0;
+                    boardState.EventLogs.Add(EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, true));
+                }
+                else
+                {
+                    boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player, FullBulletHit, true));
+                }
             }
-             
-            if (player.Health > 0) continue;
-
-            player.Status = TankStatus.Dead;
-            player.Health = 0;
         }
 
         return isHit;
@@ -107,12 +114,18 @@ public class GameMaster
                 if (!(distance <= BlastRadius)) continue;
                 var healthReduction = CalculateHealthReduction(distance);
                 player.Health -= healthReduction;
+                
+                if(player.Health <= 0)
+                {
+                    player.Status = TankStatus.Dead;
+                    player.Health = 0;
+                    boardState.EventLogs.Add(EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player));
+                }
+                else
+                {
+                    boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player, healthReduction));
+                }
             }
-
-            if (player.Health > 0) continue;
-
-            player.Status = TankStatus.Dead;
-            player.Health = 0;
         }
     }
 

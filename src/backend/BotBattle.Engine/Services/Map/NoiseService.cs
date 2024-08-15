@@ -22,6 +22,7 @@ public static class NoiseService
 
     public static float[,] GenerateNoise(int width, int height)
     {
+        Noise.Seed = new Random().Next();
         return Noise.Calc2D(width, height, Scale); // Returns an array containing 2D Simplex noise
     }
 
