@@ -1,8 +1,12 @@
-﻿namespace BotBattle.Engine.Models;
+﻿using BotBattle.Engine.Models.States;
+
+namespace BotBattle.Engine.Models;
 
 public class Bullet
 {
-    public required Position Target { get; set; }
-    public required Position Source { get; set; }
-    public required Tank Shooter { get; set; }
+    public required string Id { get; init; }
+    public required Tank Shooter { get; init; }
+    public required Position CurrentPosition { get; set; }
+    public required int ShootingRange { get; set; }
+    public BulletStatus Status { get; set; } = BulletStatus.ShotStart;
 }

@@ -2,11 +2,11 @@
 
 namespace BotBattle.Engine.Models;
 
-public class Position(int x, int y)
+public class Position(int x, int y, Direction direction= Direction.North)
 {
     public int X { get; set; } = x;
     public int Y { get; set; } = y;
-    public Direction Direction { get; set; } = Direction.North;
+    public Direction Direction { get; set; } = direction;
 
     public override bool Equals(object? obj)
     {
@@ -15,10 +15,5 @@ public class Position(int x, int y)
         if (X != position.X) return false;
         if (Y != position.Y) return false;
         return true;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y, (int)Direction);
     }
 }

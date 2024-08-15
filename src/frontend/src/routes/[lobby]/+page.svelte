@@ -53,7 +53,12 @@
 				<Canvas {width} {height} pixelRatio="auto" class="bg-white">
 					{#each Array(lobby.height) as _, row}
 						{#each Array(lobby.width) as _, column}
-							<GroundTile {tileSize} tile={getTile(lobby.mapTiles, lobby.width, column, row)} {column} {row}></GroundTile>
+							<GroundTile
+								{tileSize}
+								tile={getTile(lobby.mapTiles, lobby.width, column, row)}
+								{column}
+								{row}
+							></GroundTile>
 						{/each}
 					{/each}
 					{#each tanks as tank}
