@@ -1,11 +1,10 @@
 ﻿using BotBattle.Engine.Models.MapGeneration;
-using BotBattle.Engine.Services.Map;
 
-namespace BotBattle.Engine.Services;
+namespace BotBattle.Engine.Services.Map;
 
 public class MapGeneratorService
 {
-    public static Models.Map Generate(int width, int height)
+    public static Models.MapGeneration.Map Generate(int width, int height)
     {
         var tiles = GenerateMapWithNoise(width, height, new List<TilesType>
         {
@@ -14,7 +13,7 @@ public class MapGeneratorService
             TilesType.Sand
         });
 
-        return new Models.Map(tiles);
+        return new Models.MapGeneration.Map(tiles);
     }
 
     public static int[,] GenerateMapWithNoise(int width, int height, List<TilesType> tilesTypes)

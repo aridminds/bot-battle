@@ -6,12 +6,24 @@
 
 	export let lobby: Lobby;
 	export let boardState: BoardState | undefined;
-
+	let eventLogs = '';
+	let textareaRef: HTMLTextAreaElement | null = null;
 	let players: Tank[] = [];
+	let turns = 0;
 
 	$: {
 		players = [...(boardState?.Tanks ?? [])];
 		players = players.sort((a, b) => b.Health - a.Health);
+		eventLogs =
+			boardState?.EventLogs.map((log, index) => `Turn ${log.Turn}: ${log.Message}`).join('\n') ??
+			'';
+
+		if (boardState) {
+			turns = boardState.Turns;
+		}
+		if (textareaRef) {
+			textareaRef.scrollTop = textareaRef.scrollHeight;
+		}
 	}
 </script>
 
@@ -20,6 +32,10 @@
 		<div>
 			<h1 class="text-2xl font-bold pb-2">{lobby.name}</h1>
 			<p>Players: {lobby.players.length}</p>
+			<p>Turn: {turns}</p>
+		</div>
+		<div>
+			<textarea rows="4" bind:this={textareaRef} bind:value={eventLogs} readonly></textarea>
 		</div>
 		<div>
 			<h1 class="text-xl font-bold pb-2">Players</h1>
@@ -39,3 +55,12 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	textarea {
+		width: 100%;
+		height: 100%;
+		resize: none;
+		box-sizing: border-box;
+	}
+</style>

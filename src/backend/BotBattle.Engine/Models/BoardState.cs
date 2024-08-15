@@ -15,4 +15,6 @@ public class BoardState
     public List<Tank> Tanks { get; init; } = [];
     public List<Bullet> Bullets { get; init; } = [];
     public GameStatus Status { get; set; } = GameStatus.InProgress;
+    public List<EventLog> EventLogs { get; init; } = [];
+    public int Turns { get; set; } = 0;
 }
