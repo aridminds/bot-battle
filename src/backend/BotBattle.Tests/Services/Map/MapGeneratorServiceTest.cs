@@ -1,5 +1,6 @@
 ﻿using BotBattle.Engine.Models.MapGeneration;
 using BotBattle.Engine.Services;
+using BotBattle.Engine.Services.Map;
 using Xunit.Abstractions;
 
 namespace BotBattle.Tests.Services.Map;

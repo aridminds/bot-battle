@@ -2,7 +2,7 @@ using System.Text.Json;
 using BotBattle.Api.Matchmaking;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Services;
+using BotBattle.Engine.Services.Map;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
