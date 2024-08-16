@@ -5,7 +5,7 @@ namespace BotBattle.Engine.Services.Map;
 
 public static class NoiseService
 {
-    private const float Scale = 0.10f;
+    private const float Scale = 0.05f;
 
     public static NoiseMap GenerateNoiseMap(int width, int height, int segmentsCount)
     {

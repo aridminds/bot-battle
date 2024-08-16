@@ -3,8 +3,9 @@ using BotBattle.LobbyServer;
 
 var playerNames = args[0].Split(',');
 var arenaDimensions = args[1].Split(',');
+var roundDuration = int.Parse(args[2]);
 
-var newLobby = new Lobby(playerNames, int.Parse(arenaDimensions[0]), int.Parse(arenaDimensions[1]));
+var newLobby = new Lobby(playerNames, int.Parse(arenaDimensions[0]), int.Parse(arenaDimensions[1]), roundDuration);
 
 var cancellationTokenSource = new CancellationTokenSource();
 

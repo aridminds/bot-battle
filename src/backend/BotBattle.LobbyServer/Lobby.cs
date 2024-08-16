@@ -11,8 +11,9 @@ public class Lobby
 {
     private readonly GameMaster _gameMaster = new();
     private Tank _currentTank;
+    private int _roundDuration;
 
-    public Lobby(string[] playerNames, int arenaWidth, int arenaHeight)
+    public Lobby(string[] playerNames, int arenaWidth, int arenaHeight, int roundDuration)
     {
         BoardState = new BoardState(arenaWidth, arenaHeight);
 
@@ -22,6 +23,7 @@ public class Lobby
         foreach (var tank in BoardState.Tanks) StartPositionService.SetStartPositionForPlayer(tank, BoardState);
 
         _currentTank = BoardState.Tanks.First();
+        _roundDuration = roundDuration;
     }
 
     private BoardState BoardState { get; set; }
@@ -44,7 +46,7 @@ public class Lobby
 
             NextPlayer();
 
-            await Task.Delay(100, ct);
+            await Task.Delay(_roundDuration, ct);
         }
     }
 

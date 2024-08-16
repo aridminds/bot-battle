@@ -1,24 +1,17 @@
 using System.Text.Json;
 using BotBattle.Api.Matchmaking;
+using BotBattle.Api.Options;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
 using BotBattle.Engine.Services.Map;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var matchmakingOptions = builder.Configuration.GetSection("Matchmaking");
+builder.Services.Configure<MatchmakingOptions>(matchmakingOptions);
+
 builder.Services.AddCors();
-builder.Services.AddSingleton(s => new Matchmaking([
-        "Dominik",
-        "Matthias",
-        "Martin",
-        "Jonathan",
-        "Julien",
-        "Stefan",
-        "Elias",
-        "Dina",
-        "Christopher",
-        "Hermann"
-    ], s.GetRequiredService<BroadcastService<BoardState>>(), s.GetRequiredService<ILogger<Matchmaking>>(),
-    s.GetRequiredService<IConfiguration>()));
+builder.Services.AddSingleton<Matchmaking>();
 builder.Services.AddSingleton(typeof(BroadcastService<>));
 
 builder.Services.AddHostedService<MatchmakingHostedService>();
@@ -31,8 +24,8 @@ app.UseCors(policy => policy
     .AllowAnyOrigin()
 );
 
-// app.UseDefaultFiles();
-// app.UseStaticFiles();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.MapGet("/matchmaking/lobbies", (Matchmaking matchmaking) =>

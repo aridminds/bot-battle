@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using BotBattle.Api.Lobbies;
+using BotBattle.Api.Options;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
+using Microsoft.Extensions.Options;
 
 namespace BotBattle.Api.Matchmaking;
 
@@ -9,7 +11,6 @@ public class Matchmaking
 {
     private readonly int[] _arenaDimensions;
     private readonly BroadcastService<BoardState> _broadcastService;
-    private readonly IConfiguration _configuration;
     private readonly ConcurrentBag<LobbyProcess> _currentLobbies = [];
 
     private readonly ILogger<Matchmaking> _logger;
@@ -17,18 +18,18 @@ public class Matchmaking
 
     private readonly string _pathToLobbyServerExecutable;
     private ConcurrentStack<string> _availablePlayers;
+    private int _roundDuration;
 
-    public Matchmaking(HashSet<string> availablePlayers, BroadcastService<BoardState> broadcastService,
-        ILogger<Matchmaking> logger, IConfiguration configuration)
+    public Matchmaking(BroadcastService<BoardState> broadcastService,IOptions<MatchmakingOptions> matchmakingOptions, ILogger<Matchmaking> logger)
     {
         _broadcastService = broadcastService;
         _logger = logger;
-        _configuration = configuration;
-        _availablePlayers = new ConcurrentStack<string>(availablePlayers);
+        _availablePlayers = new ConcurrentStack<string>(matchmakingOptions.Value.AvailablePlayers);
 
-        _pathToLobbyServerExecutable = configuration.GetValue<string>("PathToLobbyServerExecutable");
-        _maximumConcurrentLobbies = configuration.GetValue<int>("MaximumConcurrentLobbies");
-        _arenaDimensions = configuration.GetValue<int[]>("ArenaDimensions") ?? [40, 20];
+        _pathToLobbyServerExecutable = matchmakingOptions.Value.PathToLobbyServerExecutable;
+        _maximumConcurrentLobbies = matchmakingOptions.Value.MaximumConcurrentLobbies;
+        _arenaDimensions = matchmakingOptions.Value.ArenaDimensions;
+        _roundDuration = matchmakingOptions.Value.RoundDuration;
     }
 
     public Task QueueNewLobbies(CancellationToken cancellationToken)
@@ -61,7 +62,7 @@ public class Matchmaking
 
     private LobbyProcess CreateNewLobby(string[] playerNames, CancellationToken cancellationToken)
     {
-        var newLobby = new LobbyProcess(playerNames, _arenaDimensions, _pathToLobbyServerExecutable, cancellationToken);
+        var newLobby = new LobbyProcess(playerNames, _arenaDimensions, _pathToLobbyServerExecutable, cancellationToken, _roundDuration);
         newLobby.Start(_broadcastService);
         return newLobby;
     }

@@ -13,10 +13,10 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
 			fallback: 'index.html' // may differ from host to host
-		})
-		// paths: {
-		// 	base: '/botbattle'
-		// }
+		}),
+		paths: {
+			base: '/botbattle'
+		}
 	}
 };
 

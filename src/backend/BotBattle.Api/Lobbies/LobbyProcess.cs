@@ -11,15 +11,16 @@ public class LobbyProcess
     private readonly int[] _arenaDimension;
     private readonly CancellationToken _cancellationToken;
     private readonly string _pathToLobbyServerExecutable;
+    private int _roundDuration;
     private readonly Channel<BoardState> BoardStateChannel = Channel.CreateUnbounded<BoardState>();
 
     public LobbyProcess(string[] playerNames, int[] arenaDimension, string pathToLobbyServerExecutable,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, int roundDuration)
     {
         Players = playerNames;
         _arenaDimension = arenaDimension;
         _pathToLobbyServerExecutable = pathToLobbyServerExecutable;
-
+        _roundDuration = roundDuration;
 
         _cancellationToken = cancellationToken;
     }
@@ -39,7 +40,7 @@ public class LobbyProcess
         _ = broadcast.Broadcast(BoardStateChannel.Reader, _cancellationToken);
         var task = Cli
             .Wrap(_pathToLobbyServerExecutable)
-            .WithArguments([string.Join(',', Players), string.Join(',', _arenaDimension)]) | (async stdOutput =>
+            .WithArguments([string.Join(',', Players), string.Join(',', _arenaDimension), _roundDuration.ToString()]) | (async stdOutput =>
         {
             var boardState = JsonSerializer.Deserialize<BoardState>(stdOutput);
 

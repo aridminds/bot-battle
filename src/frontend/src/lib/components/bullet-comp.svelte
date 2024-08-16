@@ -25,7 +25,7 @@
 			bullet.Shooter.Position.X * (canvasHeight / arenaHeight),
 			bullet.Shooter.Position.Y * (canvasWidth / arenaWidth)
 		],
-		{ duration: 100, easing }
+		{ duration: 50, easing }
 	);
 
 	$: render = ({
@@ -45,7 +45,7 @@
 		let halfTileSize = tileSize / 2;
 		let bulletSize = tileSize / 4;
 
-		context.drawImage(logo, xx - halfTileSize, yy - halfTileSize, bulletSize, bulletSize);
+		context.drawImage(logo, x - halfTileSize, y - halfTileSize, bulletSize, bulletSize);
 	};
 </script>
 

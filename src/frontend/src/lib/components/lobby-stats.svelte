@@ -27,18 +27,15 @@
 	}
 </script>
 
-<div class="p-4 h-full w-full overflow-auto border-l border-stone-700">
-	<div class="grid grid-rows-2 w-full">
+<div class="p-4 h-full gap-2 w-full flex flex-col overflow-auto">
+	<div class="">
+		<h1 class="text-2xl font-bold">Lobby: {lobby.name}</h1>
+		<p>Players: {lobby.players.length}</p>
+		<p>Turn: {turns}</p>
+	</div>
+	<div class="flex flex-col gap-2">
+		<h1 class="text-lg font-bold">Players</h1>
 		<div>
-			<h1 class="text-2xl font-bold pb-2">{lobby.name}</h1>
-			<p>Players: {lobby.players.length}</p>
-			<p>Turn: {turns}</p>
-		</div>
-		<div>
-			<textarea rows="4" bind:this={textareaRef} bind:value={eventLogs} readonly></textarea>
-		</div>
-		<div>
-			<h1 class="text-xl font-bold pb-2">Players</h1>
 			<div class="grid grid-cols-3 auto-cols-min">
 				<p class="font-bold">Name</p>
 				<p class="font-bold">Health</p>
@@ -54,13 +51,14 @@
 			{/each}
 		</div>
 	</div>
+	<div class="flex flex-col flex-grow overflow-auto w-full gap-2">
+		<h1 class="text-lg font-bold">Events</h1>
+		<textarea
+			rows="4"
+			bind:this={textareaRef}
+			bind:value={eventLogs}
+			readonly
+			class="resize-none w-full h-full"
+		></textarea>
+	</div>
 </div>
-
-<style>
-	textarea {
-		width: 100%;
-		height: 100%;
-		resize: none;
-		box-sizing: border-box;
-	}
-</style>
