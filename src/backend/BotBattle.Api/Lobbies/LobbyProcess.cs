@@ -8,49 +8,41 @@ namespace BotBattle.Api.Lobbies;
 
 public class LobbyProcess
 {
-    private readonly int[] _arenaDimension;
-    private readonly int[] _mapTiles;
-    private readonly string[] _players;
-    private readonly string _pathToLobbyServerExecutable;
-    private readonly int _roundDuration;
     private readonly Channel<BoardState> _boardStateChannel = Channel.CreateUnbounded<BoardState>();
     private readonly CancellationToken _cancellationToken;
 
+    private readonly string _pathToLobbyServerExecutable;
+    private readonly int _roundDuration;
+
     public LobbyProcess(string[] playerNames, int[] arenaDimension, int[] mapTiles, int roundDuration,
-        string pathToLobbyServerExecutable,
-        CancellationToken cancellationToken)
+        string pathToLobbyServerExecutable, CancellationToken cancellationToken)
     {
-        _players = playerNames;
-        _arenaDimension = arenaDimension;
-        _mapTiles = mapTiles;
+        Players = playerNames;
+        ArenaDimension = arenaDimension;
+        MapTiles = mapTiles;
         _pathToLobbyServerExecutable = pathToLobbyServerExecutable;
         _roundDuration = roundDuration;
         _cancellationToken = cancellationToken;
     }
 
     public int ProcessId { get; private set; }
-    public int Width => _arenaDimension[0];
-    public int Height => _arenaDimension[1];
-    public string[] Players => _players;
-    public int[] ArenaDimension => _arenaDimension;
-    public int[] MapTiles => _mapTiles;
+    public int Width => ArenaDimension[0];
+    public int Height => ArenaDimension[1];
+    public string[] Players { get; }
+    public int[] ArenaDimension { get; }
+    public int[] MapTiles { get; }
+
+    public event EventHandler<LobbyProcess> LobbyFinished;
 
     public void Start(BroadcastService<BoardState> broadcast)
     {
-        Task.Factory.StartNew(b => RunAsync((BroadcastService<BoardState>)b!), broadcast, _cancellationToken);
-    }
-
-    private async void RunAsync(BroadcastService<BoardState> broadcast)
-    {
-        _ = broadcast.Broadcast(_boardStateChannel.Reader, _cancellationToken);
-
         var task = Cli
                        .Wrap(_pathToLobbyServerExecutable)
                        .WithArguments([
-                           string.Join(',', _players),
-                           string.Join(',', _arenaDimension),
+                           string.Join(',', Players),
+                           string.Join(',', ArenaDimension),
                            _roundDuration.ToString(),
-                           string.Join(',', _mapTiles)
+                           string.Join(',', MapTiles)
                        ]) |
                    (async stdOutput =>
                    {
@@ -65,13 +57,25 @@ public class LobbyProcess
         var process = task.ExecuteAsync(_cancellationToken);
         ProcessId = process.ProcessId;
 
+        Task.Factory.StartNew(
+            b => RunAsync(((BroadcastService<BoardState>, CommandTask<CommandResult>))b!),
+            (broadcast, process), _cancellationToken);
+    }
+
+    private async void RunAsync((BroadcastService<BoardState>, CommandTask<CommandResult>) tupleOfServices)
+    {
+        _ = tupleOfServices.Item1.Broadcast(_boardStateChannel.Reader, _cancellationToken);
+
         try
         {
-            await process;
+            await tupleOfServices.Item2;
         }
         catch (OperationCanceledException e)
         {
-            // Console.WriteLine(e);
+        }
+        finally
+        {
+            LobbyFinished?.Invoke(this, this);
         }
     }
 }
