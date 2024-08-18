@@ -4,6 +4,7 @@
 	import { quadOut as easing } from 'svelte/easing';
 	import { onMount } from 'svelte';
 	import { BulletStatus, type Bullet } from '$lib/types/bullet';
+	import { calculateRotationRadians } from '$lib/types/tank';
 
 	export let bullet: Bullet;
 	export let tileSize: number;
@@ -17,7 +18,7 @@
 
 	onMount(() => {
 		cannonBallImage = new Image();
-		cannonBallImage.src = `cannon_ball.svg`;
+		cannonBallImage.src = `bullet_dark_outline.png`;
 
 		explosionImage = new Image();
 		explosionImage.src = 'explosion.png';
@@ -61,7 +62,12 @@
 			);
 			return;
 		} else {
-			const scale = 0.2;
+			const scaleX = 0.25;
+			const scaleY = 0.4;
+
+			context.save();
+			context.translate(x + tileSize / 2, y + tileSize / 2);
+			context.rotate(calculateRotationRadians(bullet.CurrentPosition, 90));
 
 			context.drawImage(
 				cannonBallImage as HTMLImageElement,
@@ -69,11 +75,12 @@
 				0,
 				(cannonBallImage as HTMLImageElement).width,
 				(cannonBallImage as HTMLImageElement).height,
-				x + tileSize / 2 - (tileSize * scale) / 2,
-				y + tileSize / 2 - (tileSize * scale) / 2,
-				tileSize * scale,
-				tileSize * scale
+				(-tileSize * scaleX) / 2,
+				(-tileSize * scaleY) / 2,
+				tileSize * scaleX,
+				tileSize * scaleY
 			);
+			context.restore();
 		}
 	};
 </script>
