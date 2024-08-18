@@ -7,7 +7,7 @@
 	import GroundTile from './ground-tile.svelte';
 
 	let lobbySize: number = 10;
-	let roundDuration: number = 1000;
+	let roundDuration: number = 200;
 	let arenaWidth: number = 40;
 	let arenaHeight: number = 20;
 	let arenaWidthTemp: number = arenaWidth;

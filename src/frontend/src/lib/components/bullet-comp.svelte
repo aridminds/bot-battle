@@ -47,7 +47,7 @@
 		// let [xx, yy] = $position;
 
 		if (bullet.Status === BulletStatus.Hit) {
-			const scale = 2;
+			const scale = 3;
 
 			context.drawImage(
 				explosionImage as HTMLImageElement,
