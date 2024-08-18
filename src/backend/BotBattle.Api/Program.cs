@@ -1,5 +1,7 @@
 using System.Text.Json;
+using BotBattle.Api.Lobbies;
 using BotBattle.Api.Matchmaking;
+using BotBattle.Api.Models;
 using BotBattle.Api.Options;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
@@ -28,14 +30,31 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.MapGet("/map/generate/{width:int}/{height:int}", (int width, int height) =>
+{
+    var map = MapGeneratorService.Generate(width, height);
+
+    return Results.Ok(map.Get1DArray());
+});
+
 app.MapGet("/matchmaking/lobbies", (Matchmaking matchmaking) =>
 {
     var lobbies = matchmaking.GetLobbies();
 
-    return Results.Ok(lobbies.Select(l => new
+    return Results.Ok(lobbies.Select(lobby => new
     {
-        Name = l.ProcessId
+        Name = lobby.ProcessId
     }));
+});
+
+app.MapPost("/matchmaking/lobbies", (CreateLobbyRequest request, Matchmaking matchmaking) =>
+{
+    var lobby = matchmaking.CreateNewLobby(request.LobbySize, request.RoundDuration, request.AreaDimensions,
+        request.MapTiles);
+
+    return lobby == null
+        ? Results.BadRequest()
+        : Results.Created($"/matchmaking/lobbies/{lobby.ProcessId}", new { lobby.ProcessId });
 });
 
 app.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking matchmaking) =>
@@ -45,15 +64,13 @@ app.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking match
     if (lobby == null)
         return Results.NotFound();
 
-    var map = MapGeneratorService.Generate(lobby.Width, lobby.Height);
-
     return Results.Ok(new
     {
         name = lobby.ProcessId,
         width = lobby.Width,
         height = lobby.Height,
         players = lobby.Players,
-        mapTiles = map.Get1DArray()
+        mapTiles = lobby.MapTiles,
     });
 });
 

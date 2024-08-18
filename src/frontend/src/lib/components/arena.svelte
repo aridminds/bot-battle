@@ -7,8 +7,18 @@
 	let containerHeight: number = 0;
 	let containertWidth: number = 0;
 
-	let arenaConstrains = calculateConstrains(containerHeight, containertWidth);
-	$: arenaConstrains = calculateConstrains(containerHeight, containertWidth);
+	let arenaConstrains = calculateConstrains(
+		containerHeight,
+		containertWidth,
+		arenaWidth,
+		arenaHeight
+	);
+	$: arenaConstrains = calculateConstrains(
+		containerHeight,
+		containertWidth,
+		arenaWidth,
+		arenaHeight
+	);
 
 	onMount(() => {
 		containerHeight = document.getElementById('arena-container')?.clientHeight || 0;
@@ -20,7 +30,12 @@
 		});
 	});
 
-	function calculateConstrains(height: number, width: number) {
+	function calculateConstrains(
+		height: number,
+		width: number,
+		arenaWidth: number,
+		arenaHeight: number
+	) {
 		if (width && height) {
 			const resolutionViewport = width / height;
 			const resolutionArena = arenaWidth / arenaHeight;
