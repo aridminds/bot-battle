@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { Layer } from 'svelte-canvas';
-	import { tweened } from 'svelte/motion';
-	import { quadOut as easing } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import Atlas from '$lib/images/terrainTiles_default.png?raw';
-	import type { Bullet } from '$lib/types/bullet';
 
 	export let tileSize: number;
 	export let tile: number;
@@ -13,12 +9,6 @@
 
 	let atlas: CanvasImageSource;
 	const atlasTileSize = 64;
-	// $: {
-	// 	console.log('tileSize', tileSize);
-	// 	console.log('tile', tile);
-	// 	console.log('column', column);
-	// 	console.log('row', row);
-	// }
 
 	onMount(() => {
 		atlas = new Image();
