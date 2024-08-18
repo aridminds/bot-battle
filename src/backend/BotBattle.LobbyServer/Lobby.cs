@@ -45,8 +45,6 @@ public class Lobby
             }
 
             NextPlayer();
-
-            await Task.Delay(_roundDuration, ct);
         }
     }
 
@@ -58,8 +56,9 @@ public class Lobby
         _currentTank = BoardState.Tanks[nextPlayerIndex];
     }
 
-    private static async Task<(long, long)> CallDataSource()
+    private async Task<(long, long)> CallDataSource()
     {
+        await Task.Delay(_roundDuration);
         return (new Random().Next(0, 5000), new Random().Next(0, 5000));
     }
 }

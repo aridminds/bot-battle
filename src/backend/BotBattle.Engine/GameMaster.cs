@@ -17,12 +17,6 @@ public class GameMaster
         {
             var bullet = boardState.Bullets[index];
 
-            if (IsSomeoneHit(boardState, bullet))
-            {
-                boardState.Bullets.RemoveAt(index);
-                continue;
-            }
-            
             switch (bullet.ShootingRange)
             {
                 case 0:
@@ -33,12 +27,14 @@ public class GameMaster
                     boardState.Bullets.RemoveAt(index);
                     break;
                 default:
-                    bullet.CurrentPosition = CalculateNewPosition(bullet.CurrentPosition, bullet.CurrentPosition.Direction);
+                    bullet.CurrentPosition =
+                        CalculateNewPosition(bullet.CurrentPosition, bullet.CurrentPosition.Direction);
                     bullet.ShootingRange--;
+                    IsSomeoneDirectlyHit(boardState, bullet);
                     break;
             }
         }
-        
+
         var tankAction = TankCalculator.CalculateNextAction(payloadHashString);
         var currentTank = boardState.Tanks.First(t => t.Name == tank.Name);
         if (currentTank.Status == TankStatus.Dead) return boardState;
@@ -49,7 +45,7 @@ public class GameMaster
         {
             var shootingRange = TankCalculator.CalculateShootingRange(tankAction.RawShootingRange, BlastRadius,
                 boardState.Width, boardState.Height, currentTank.Position);
-            ShootBullet(tankAction.Rotation, shootingRange, currentTank, boardState);
+            ShootBullet(shootingRange, currentTank, boardState);
         }
 
 
@@ -58,7 +54,7 @@ public class GameMaster
 
         return boardState;
     }
-    
+
     public void CheckForWinner(BoardState boardState)
     {
         var alivePlayers = boardState.Tanks.Where(player => player.Status == TankStatus.Alive).ToList();
@@ -72,36 +68,22 @@ public class GameMaster
         }
     }
 
-    private bool IsSomeoneHit(BoardState boardState, Bullet bullet)
+    private static void IsSomeoneDirectlyHit(BoardState boardState, Bullet bullet)
     {
-        var isHit = false;
+        if (bullet.ShootingRange <= 0) return;
+
         foreach (var player in boardState.Tanks)
         {
             if (player.Status == TankStatus.Dead) continue;
-            if(player == bullet.Shooter) continue;
-            if (bullet.CurrentPosition.Equals(player.Position))
-            {
-                isHit = true;
-                bullet.Status = BulletStatus.Hit;
-                bullet.ShootingRange = -1;
-                player.Health -= FullBulletHit;
-                
-                if(player.Health <= 0)
-                {
-                    player.Status = TankStatus.Dead;
-                    player.Health = 0;
-                    boardState.EventLogs.Add(EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, true));
-                }
-                else
-                {
-                    boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player, FullBulletHit, true));
-                }
-            }
-        }
+            if (player == bullet.Shooter) continue;
+            if (!bullet.CurrentPosition.Equals(player.Position)) continue;
 
-        return isHit;
+            bullet.ShootingRange = -1;
+            bullet.Status = BulletStatus.Hit;
+            CheckPlayerHealthAndCrateEventLog(boardState, player, bullet, FullBulletHit, true);
+        }
     }
-    
+
     private void CalculateIsSomeoneHit(List<Tank> players, BoardState boardState)
     {
         foreach (var player in players)
@@ -109,23 +91,30 @@ public class GameMaster
             if (player.Status == TankStatus.Dead) continue;
             foreach (var bullet in boardState.Bullets)
             {
-                if(bullet.Status != BulletStatus.Hit) continue;
+                if (bullet.Status != BulletStatus.Hit) break;
                 var distance = CalculateDistance(bullet.CurrentPosition, player.Position);
                 if (!(distance <= BlastRadius)) continue;
                 var healthReduction = CalculateHealthReduction(distance);
-                player.Health -= healthReduction;
-                
-                if(player.Health <= 0)
-                {
-                    player.Status = TankStatus.Dead;
-                    player.Health = 0;
-                    boardState.EventLogs.Add(EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player));
-                }
-                else
-                {
-                    boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player, healthReduction));
-                }
+                CheckPlayerHealthAndCrateEventLog(boardState, player, bullet, healthReduction);
             }
+        }
+    }
+
+    private static void CheckPlayerHealthAndCrateEventLog(BoardState boardState, Tank player, Bullet bullet,
+        int healthReduction, bool directHit = false)
+    {
+        player.Health -= FullBulletHit;
+        if (player.Health <= 0)
+        {
+            player.Status = TankStatus.Dead;
+            player.Health = 0;
+            boardState.EventLogs.Add(
+                EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, directHit));
+        }
+        else
+        {
+            boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player,
+                healthReduction, directHit));
         }
     }
 
@@ -141,21 +130,19 @@ public class GameMaster
         return (int)(FullBulletHit * (1 - distance / BlastRadius));
     }
 
-    private void ShootBullet(Direction direction, int shootingRange, Tank currentTank, BoardState boardState)
+    private void ShootBullet(int shootingRange, Tank currentTank, BoardState boardState)
     {
-        var bulletPosition = currentTank.Position;
-
-        for (var i = 0; i < shootingRange; i++)
+        var bullet = new Bullet
         {
-            bulletPosition = CalculateNewPosition(bulletPosition, direction);
-            bulletPosition = ClampPositionToGrid(bulletPosition, boardState);
-        }
-
-        if (!bulletPosition.Equals(currentTank.Position))
-            boardState.Bullets.Add(new Bullet
-                { Id = $"{currentTank.Name}-{Guid.NewGuid()}", Shooter = currentTank, CurrentPosition = currentTank.Position, ShootingRange = shootingRange});
+            Id = $"{currentTank.Name}-{Guid.NewGuid()}", 
+            Shooter = currentTank,
+            CurrentPosition = currentTank.Position, 
+            ShootingRange = shootingRange - 1
+        };
+        
+        bullet.CurrentPosition = CalculateNewPosition(bullet.CurrentPosition, bullet.CurrentPosition.Direction);
+        boardState.Bullets.Add(bullet);
     }
-
 
     private Position MoveTank(Direction direction, Position currentTankPosition, BoardState boardState)
     {

@@ -39,10 +39,10 @@ public static class TankCalculator
         {
             Direction.North => tankPosition.Y,
             Direction.NorthEast => Math.Min(tankPosition.Y, gridWidth - tankPosition.X),
-            Direction.East => gridWidth - tankPosition.X,
-            Direction.SouthEast => Math.Min(gridHeight - tankPosition.Y, gridWidth - tankPosition.X),
-            Direction.South => gridHeight - tankPosition.Y,
-            Direction.SouthWest => Math.Min(gridHeight - tankPosition.Y, tankPosition.X),
+            Direction.East => gridWidth - tankPosition.X - 1,
+            Direction.SouthEast => Math.Min(gridHeight - tankPosition.Y - 1, gridWidth - tankPosition.X),
+            Direction.South => gridHeight - tankPosition.Y - 1,
+            Direction.SouthWest => Math.Min(gridHeight - tankPosition.Y - 1, tankPosition.X),
             Direction.West => tankPosition.X,
             Direction.NorthWest => Math.Min(tankPosition.Y, tankPosition.X),
             _ => throw new ArgumentOutOfRangeException()
