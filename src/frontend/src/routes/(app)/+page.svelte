@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { getApiPath, getAppPath } from '$lib/base-path';
+	import { getApiPath } from '$lib/base-path';
 	import type { Lobby } from '$lib/types/lobby';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { base } from '$app/paths';
-	import { Dialog, Separator, Label } from 'bits-ui';
+	import { Dialog } from 'bits-ui';
 	import { fade } from 'svelte/transition';
 	import LobbyBuilder from '$lib/components/lobby-builder.svelte';
 
@@ -17,7 +17,7 @@
 			.then((data) => lobbies.set(data));
 	});
 
-	function onLobbyCreated() {
+	function onCreateLobby() {
 		createLobbyDialogOpen = false;
 
 		fetch(`${getApiPath()}/matchmaking/lobbies`)
@@ -26,11 +26,10 @@
 	}
 </script>
 
-<div class="w-full p-8">
-	<h1 class="text-2xl mb-8">bot-battle <span class="text-sm">v0.0.0</span></h1>
+<div class="w-full">
 	<button
-		class="rounded-md border border-zinc-900 p-2"
-		on:click={() => (createLobbyDialogOpen = true)}>Create lobby</button
+		class="rounded-md border border-zinc-900 px-2 py-1"
+		on:click={() => (createLobbyDialogOpen = true)}>New lobby</button
 	>
 	<div class="grid grid-cols-5 gap-2 my-4">
 		{#each $lobbies as lobby}
@@ -53,9 +52,9 @@
 			class="fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
-			class="fixed left-[50%] top-[50%] max-w-[90%] max-h-[90%] z-50 w-full h-full translate-x-[-50%] translate-y-[-50%] bg-white shadow outline-none md:w-full"
+			class="fixed left-[50%] top-[50%] max-w-[90%] max-h-[90%] z-50 w-full h-full translate-x-[-50%] translate-y-[-50%] bg-white shadow outline-none font-mono"
 		>
-			<LobbyBuilder onCreateLobby={onLobbyCreated} />
+			<LobbyBuilder {onCreateLobby} />
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>

@@ -37,6 +37,17 @@ app.MapGet("/map/generate/{width:int}/{height:int}", (int width, int height) =>
     return Results.Ok(map.Get1DArray());
 });
 
+#region Account
+
+app.MapPost("/account/login", (LoginRequest request) =>
+{
+
+});
+
+#endregion
+
+#region Matchmaking
+
 app.MapGet("/matchmaking/lobbies", (Matchmaking matchmaking) =>
 {
     var lobbies = matchmaking.GetLobbies();
@@ -106,5 +117,8 @@ app.MapGet("/matchmaking/lobbies/{lobbyId:int}/sse",
         return Results.NoContent();
     }
 );
+
+#endregion
+
 
 app.Run();

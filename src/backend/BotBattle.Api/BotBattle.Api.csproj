@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="CliWrap" Version="3.6.6"/>
+        <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
     </ItemGroup>
 
     <ItemGroup>
