@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using BotBattle.Engine;
+using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
 using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
@@ -18,9 +19,23 @@ public class Lobby
         BoardState = new BoardState(arenaWidth, arenaHeight);
 
         foreach (var playerName in playerNames)
-            BoardState.Tanks.Add(new Tank { Name = playerName, Position = new Position(0, 0) });
+            BoardState.Tanks.Add(new Tank { Name = playerName });
 
-        foreach (var tank in BoardState.Tanks) StartPositionService.SetStartPositionForPlayer(tank, BoardState);
+        foreach (var tank in BoardState.Tanks)
+        {
+            tank.Position = StartPositionService.SetStartPosition(BoardState);
+        }
+
+       
+        for (var i = 0; i < 20; i++)
+        {
+            BoardState.Obstacles.Add(new Obstacle
+            {
+                Id = Guid.NewGuid().ToString(),
+                Position = StartPositionService.SetStartPosition(BoardState),
+                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed)
+            });
+        }
 
         _currentTank = BoardState.Tanks.First();
         _roundDuration = roundDuration;

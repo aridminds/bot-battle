@@ -1,4 +1,4 @@
-namespace BotBattle.Engine.Models.States;
+namespace BotBattle.Brain.Models;
 
 public enum Direction
 {

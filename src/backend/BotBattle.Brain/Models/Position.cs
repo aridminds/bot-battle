@@ -1,6 +1,4 @@
-﻿using BotBattle.Engine.Models.States;
-
-namespace BotBattle.Engine.Models;
+﻿namespace BotBattle.Brain.Models;
 
 public class Position(int x, int y, Direction direction= Direction.North)
 {

@@ -1,4 +1,6 @@
-﻿using BotBattle.Engine.Models;
+﻿using BotBattle.Brain;
+using BotBattle.Brain.Models;
+using BotBattle.Engine.Models;
 using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
 
@@ -51,8 +53,27 @@ public class GameMaster
 
         CalculateIsSomeoneHit(boardState.Tanks, boardState);
         CheckForWinner(boardState);
+        GrowUpTrees(boardState);
 
         return boardState;
+    }
+
+    private static void GrowUpTrees(BoardState boardState)
+    {
+        foreach (var obstacle in boardState.Obstacles)
+        {
+            if(obstacle.Type == ObstacleType.Stone || obstacle.Type == ObstacleType.TreeLarge) continue;
+            if (boardState.Turns <= obstacle.UpdateTurn + 15) continue;
+            
+            obstacle.Type = obstacle.Type switch
+            {
+                ObstacleType.Destroyed => ObstacleType.TreeLeaf,
+                ObstacleType.TreeLeaf => ObstacleType.TreeSmall,
+                ObstacleType.TreeSmall => ObstacleType.TreeLarge,
+                _ => obstacle.Type
+            };
+            obstacle.UpdateTurn = boardState.Turns;
+        }
     }
 
     public void CheckForWinner(BoardState boardState)
@@ -65,6 +86,7 @@ public class GameMaster
             winner.Status = TankStatus.Winner;
             boardState.Status = GameStatus.GameOver;
             boardState.EventLogs.Add(EventLogExtensions.CreateHasWonEventLog(boardState.Turns, winner));
+            boardState.Bullets.Clear();
         }
     }
 
@@ -82,6 +104,18 @@ public class GameMaster
             bullet.Status = BulletStatus.Hit;
             CheckPlayerHealthAndCrateEventLog(boardState, player, bullet, FullBulletHit, true);
         }
+
+        for (var index = 0; index < boardState.Obstacles.Count; index++)
+        {
+            var obstacle = boardState.Obstacles[index];
+            if (!bullet.CurrentPosition.Equals(obstacle.Position)) continue;
+
+            bullet.ShootingRange = -1;
+            bullet.Status = BulletStatus.Hit;
+            if (obstacle.Type == ObstacleType.Stone) continue;
+            obstacle.Type = ObstacleType.Destroyed;
+            obstacle.UpdateTurn = boardState.Turns;
+        }
     }
 
     private void CalculateIsSomeoneHit(List<Tank> players, BoardState boardState)
@@ -91,11 +125,28 @@ public class GameMaster
             if (player.Status == TankStatus.Dead) continue;
             foreach (var bullet in boardState.Bullets)
             {
-                if (bullet.Status != BulletStatus.Hit) break;
+                if (bullet.Status != BulletStatus.Hit) continue;
                 var distance = CalculateDistance(bullet.CurrentPosition, player.Position);
                 if (!(distance <= BlastRadius)) continue;
                 var healthReduction = CalculateHealthReduction(distance);
                 CheckPlayerHealthAndCrateEventLog(boardState, player, bullet, healthReduction);
+            }
+        }
+
+        for (var index = 0; index < boardState.Obstacles.Count; index++)
+        {
+            var obstacle = boardState.Obstacles[index];
+            foreach (var bullet in boardState.Bullets)
+            {
+                if (bullet.Status != BulletStatus.Hit) continue;
+                if (bullet.CurrentPosition.Equals(obstacle.Position))
+                {
+                    bullet.ShootingRange = -1;
+                    bullet.Status = BulletStatus.Hit;
+                    if(obstacle.Type == ObstacleType.Stone) continue;
+                    obstacle.Type = ObstacleType.Destroyed;
+                    obstacle.UpdateTurn = boardState.Turns;
+                }
             }
         }
     }
@@ -155,7 +206,8 @@ public class GameMaster
 
     private bool IsPositionOccupied(Position position, BoardState boardState)
     {
-        return boardState.Tanks.Any(player => player.Position.Equals(position));
+        return boardState.Tanks.Any(player => player.Position.Equals(position))
+            || boardState.Obstacles.Any(obstacle => obstacle.Position.Equals(position));
     }
 
     private Position CalculateNewPosition(Position currentPosition, Direction direction)

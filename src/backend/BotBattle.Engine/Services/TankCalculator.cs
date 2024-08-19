@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using BotBattle.Brain;
+using BotBattle.Brain.Models;
 using BotBattle.Engine.Models;
 using BotBattle.Engine.Models.States;
 

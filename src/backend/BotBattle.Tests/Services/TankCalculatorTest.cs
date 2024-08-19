@@ -1,4 +1,6 @@
-﻿using BotBattle.Engine.Models;
+﻿using BotBattle.Brain;
+using BotBattle.Brain.Models;
+using BotBattle.Engine.Models;
 using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
 

@@ -13,11 +13,14 @@
 	import LobbyStats from '$lib/components/lobby-stats.svelte';
 	import { getApiPath } from '$lib/base-path';
 	import GroundTile from '$lib/components/ground-tile.svelte';
+	import type { Obstacle } from '$lib/types/obstacle';
+	import ObstacleComp from '$lib/components/obstacle-comp.svelte';
 
 	let width: number;
 	let height: number;
 	let tanks: Tank[] = [];
 	let bullets: Bullet[] = [];
+	let obstacles: Obstacle[] = [];
 
 	const boardState = writable<BoardState>();
 
@@ -29,6 +32,7 @@
 		boardState.set(bla);
 		tanks = $boardState.Tanks;
 		bullets = $boardState.Bullets;
+		obstacles = $boardState.Obstacles;
 	};
 
 	async function updateBoardState() {
@@ -61,6 +65,7 @@
 							></GroundTile>
 						{/each}
 					{/each}
+
 					{#each tanks as tank}
 						<TankComp
 							{tank}
@@ -70,6 +75,10 @@
 							arenaHeight={lobby.height}
 							arenaWidth={lobby.width}
 						></TankComp>
+					{/each}
+					{#each obstacles as obstacle}
+						<ObstacleComp {obstacle} {tileSize} arenaHeight={lobby.height} arenaWidth={lobby.width}
+						></ObstacleComp>
 					{/each}
 					{#each bullets as bullet}
 						<BulletComp

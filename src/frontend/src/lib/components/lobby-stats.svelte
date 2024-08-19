@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { BoardState } from '$lib/types/board-state';
 	import type { Lobby } from '$lib/types/lobby';
+	import type { Obstacle } from '$lib/types/obstacle';
 	import type { Tank } from '$lib/types/tank';
 	import { TankStatus } from '$lib/types/tankStatus';
 
@@ -9,10 +10,12 @@
 	let eventLogs = '';
 	let textareaRef: HTMLTextAreaElement | null = null;
 	let players: Tank[] = [];
+	let obstacles: Obstacle[] = [];
 	let turns = 0;
 
 	$: {
 		players = [...(boardState?.Tanks ?? [])];
+		obstacles = [...(boardState?.Obstacles ?? [])];
 		players = players.sort((a, b) => b.Health - a.Health);
 		eventLogs =
 			boardState?.EventLogs.map((log, index) => `Turn ${log.Turn}: ${log.Message}`).join('\n') ??
