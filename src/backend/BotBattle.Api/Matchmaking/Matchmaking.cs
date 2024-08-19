@@ -64,6 +64,7 @@ public class Matchmaking
 
     private void OnLobbyFinished(object? sender, LobbyProcess lobby)
     {
+        _availablePlayers.PushRange(lobby.Players);
         _currentLobbies.TryRemove(lobby.ProcessId.ToString(), out _);
     }
 
