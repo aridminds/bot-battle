@@ -17,4 +17,5 @@ public class BoardState
     public GameStatus Status { get; set; } = GameStatus.InProgress;
     public List<EventLog> EventLogs { get; init; } = [];
     public int Turns { get; set; } = 0;
+    public List<Obstacle> Obstacles { get; init; } = [];
 }

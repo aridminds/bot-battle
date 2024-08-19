@@ -1,4 +1,6 @@
-﻿using BotBattle.Engine.Models;
+﻿using BotBattle.Brain;
+using BotBattle.Brain.Models;
+using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.Services;
 
@@ -6,7 +8,7 @@ public static class StartPositionService
 {
     private const int MinDistanceBetweenPlayers = 2;
 
-    public static void SetStartPositionForPlayer(Tank tank, BoardState boardState)
+    public static Position SetStartPosition(BoardState boardState)
     {
         var random = new Random();
         Position newPosition;
@@ -14,16 +16,21 @@ public static class StartPositionService
         {
             newPosition = new Position(random.Next(0, boardState.Width),
                 random.Next(0, boardState.Height));
-        } while (!IsPositionValid(newPosition, boardState.Tanks));
+        } while (!IsPositionValid(newPosition, boardState));
 
-        tank.Position = newPosition;
+        return newPosition;
     }
 
-    private static bool IsPositionValid(Position position, List<Tank> players)
+    private static bool IsPositionValid(Position position, BoardState boardState)
     {
-        foreach (var otherPlayer in players)
+        foreach (var otherPlayer in boardState.Tanks)
             if (otherPlayer.Position.Y != 0 && otherPlayer.Position.X != 0 &&
                 GetDistance(position, otherPlayer.Position) < MinDistanceBetweenPlayers)
+                return false;
+        
+        foreach (var obstacle in boardState.Obstacles)
+            if (obstacle.Position.Y != 0 && obstacle.Position.X != 0 &&
+                GetDistance(position, obstacle.Position) < MinDistanceBetweenPlayers)
                 return false;
         return true;
     }
