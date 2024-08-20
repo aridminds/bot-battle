@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"pixi.js": "^8.3.3",
 		"svelte-canvas": "^1.2.0"
 	}
 }
