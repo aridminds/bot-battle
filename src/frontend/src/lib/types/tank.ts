@@ -7,6 +7,8 @@ export type Tank = {
 	Health: number;
 	Position: Position;
 	Status: TankStatus;
+	PointRegister: number;
+	DiedInTurn: number;
 };
 
 export function calculateRotationDegrees(position: Position, offset: number = 0): number {
@@ -44,5 +46,5 @@ export function calculateRotationDegrees(position: Position, offset: number = 0)
 }
 
 export function calculateRotationRadians(position: Position, offsetDegree: number = 0): number {
-	return calculateRotationDegrees(position, offsetDegree) * Math.PI / 180;
+	return (calculateRotationDegrees(position, offsetDegree) * Math.PI) / 180;
 }

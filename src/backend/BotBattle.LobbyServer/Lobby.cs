@@ -31,7 +31,6 @@ public class Lobby
         {
             BoardState.Obstacles.Add(new Obstacle
             {
-                Id = Guid.NewGuid().ToString(),
                 Position = StartPositionService.SetStartPosition(BoardState),
                 Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed)
             });
