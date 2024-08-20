@@ -3,7 +3,7 @@ using BotBattle.Api.Lobbies;
 using BotBattle.Api.Matchmaking;
 using BotBattle.Api.Models;
 using BotBattle.Api.Options;
-using BotBattle.Api.Services;
+using BotBattle.Api.Services.Broadcast;
 using BotBattle.Engine.Models;
 using BotBattle.Engine.Services.Map;
 
@@ -86,7 +86,7 @@ app.MapGet("/matchmaking/lobbies/{lobbyId:int}/sse",
         var response = httpContext.Response;
         response.Headers.Append("Content-Type", "text/event-stream");
 
-        using var subscription = broadcastService.RegisterOutboundChannel();
+        using var subscription = broadcastService.RegisterOutboundChannel(lobbyId);
 
         while (!cancellation.IsCancellationRequested)
         {

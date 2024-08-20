@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using BotBattle.Api.Lobbies;
 using BotBattle.Api.Options;
-using BotBattle.Api.Services;
+using BotBattle.Api.Services.Broadcast;
 using BotBattle.Engine.Models;
 using Microsoft.Extensions.Options;
 

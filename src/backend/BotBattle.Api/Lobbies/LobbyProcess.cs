@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Threading.Channels;
-using BotBattle.Api.Services;
+using BotBattle.Api.Services.Broadcast;
 using BotBattle.Engine.Models;
 using CliWrap;
 
@@ -64,7 +64,7 @@ public class LobbyProcess
 
     private async void RunAsync((BroadcastService<BoardState>, CommandTask<CommandResult>) tupleOfServices)
     {
-        _ = tupleOfServices.Item1.Broadcast(_boardStateChannel.Reader, _cancellationToken);
+        _ = tupleOfServices.Item1.Broadcast(_boardStateChannel.Reader, tupleOfServices.Item2.ProcessId, _cancellationToken);
 
         try
         {
