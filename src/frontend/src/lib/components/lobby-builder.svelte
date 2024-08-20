@@ -5,6 +5,7 @@
 	import { Canvas } from 'svelte-canvas';
 	import Arena from './arena.svelte';
 	import GroundTile from './ground-tile.svelte';
+	import { Label } from 'bits-ui';
 
 	let lobbySize: number = 10;
 	let roundDuration: number = 200;
@@ -69,44 +70,67 @@
 			</Canvas>
 		</Arena>
 	</div>
-	<div class="col-span-1 p-4 h-full flex flex-col gap-4">
-		<div class="flex flex-col gap-2">
-			<h2 class="font-bold">Lobby settings</h2>
-			<input
-				class="w-full rounded-md border border-zinc-900 p-2"
-				type="number"
-				placeholder="Max players"
-				bind:value={lobbySize}
-			/>
-			<input
-				class="w-full rounded-md border border-zinc-900 p-2"
-				type="number"
-				placeholder="Round duration (milliseconds)"
-				bind:value={roundDuration}
-			/>
+	<div class="flex flex-col h-full justify-between gap-2 p-6">
+		<h1 class="text-2xl">Lobbybuilder</h1>
+		<div class="flex flex-col h-full gap-2">
+			<div>
+				<p class="font-bold">Lobby settings</p>
+				<Label.Root for="lobbySize" class="text-sm font-medium">Max players</Label.Root>
+				<div class="relative w-full">
+					<input
+						id="lobbySize"
+						class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
+						placeholder="Max players"
+						type="number"
+						min="2"
+						bind:value={lobbySize}
+					/>
+				</div>
+				<Label.Root for="roundDuration" class="text-sm font-medium">Round duration</Label.Root>
+				<div class="relative w-full">
+					<input
+						id="roundDuration"
+						class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
+						placeholder="Round duration (milliseconds)"
+						type="number"
+						min="50"
+						bind:value={roundDuration}
+					/>
+				</div>
+			</div>
+
+			<div>
+				<p class="font-bold">Map settings</p>
+				<Label.Root for="arenaWidth" class="text-sm font-medium">Width</Label.Root>
+				<div class="relative w-full">
+					<input
+						id="arenaWidth"
+						class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
+						placeholder="Width"
+						type="number"
+						min="2"
+						bind:value={arenaWidth}
+					/>
+				</div>
+				<Label.Root for="arenaHeight" class="text-sm font-medium">Height</Label.Root>
+				<div class="relative w-full">
+					<input
+						id="arenaHeight"
+						class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
+						placeholder="Height"
+						type="number"
+						min="2"
+						bind:value={arenaHeight}
+					/>
+				</div>
+			</div>
+			<button class="rounded-md border border-zinc-900 h-min px-2 py-1" on:click={generateMap}
+				>Generate map</button
+			>
+			<span class="flex flex-grow"></span>
+			<button class="rounded-md border border-zinc-900 h-min px-2 py-1" on:click={createLobby}
+				>Create match</button
+			>
 		</div>
-		<div class="flex flex-col gap-2">
-			<h2 class="font-bold">Map settings</h2>
-			<input
-				class="w-full rounded-md border border-zinc-900 p-2"
-				type="number"
-				min="1"
-				placeholder="Arena width"
-				bind:value={arenaWidth}
-			/>
-			<input
-				class="w-full rounded-md border border-zinc-900 p-2"
-				type="number"
-				min="1"
-				placeholder="Arena height"
-				bind:value={arenaHeight}
-			/>
-			<button class="w-full rounded-md border border-zinc-900 p-2" on:click={generateMap}
-				>Regenerate
-			</button>
-		</div>
-		<button class="w-full rounded-md border border-zinc-900 p-2" on:click={createLobby}
-			>Create lobby
-		</button>
 	</div>
 </div>

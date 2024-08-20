@@ -2,9 +2,9 @@ import { dev } from '$app/environment';
 import { base } from '$app/paths';
 
 export const getApiPath = (): string => {
-	if (dev) return 'http://localhost:5199';
+	// if (dev) return '';
 
-	return window?.location.origin + base;
+	return window?.location.origin + base + '/api';
 };
 
 export const getAppPath = (): string => {
