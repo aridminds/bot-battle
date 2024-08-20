@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { Label } from 'bits-ui';
 
-	export let onLogin: () => void;
+	let username: string;
+	let password: string;
+	export let onLogin: (username: string, password: string) => void;
 	export let onSwitchToRegister: () => void;
 </script>
 
@@ -15,6 +17,8 @@
 					id="username"
 					class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
 					placeholder="Username"
+					type="text"
+					bind:value={username}
 				/>
 			</div>
 		</div>
@@ -26,6 +30,7 @@
 					class="rounded-md border w-full border-zinc-900 h-min px-2 py-1"
 					placeholder="Password"
 					type="password"
+					bind:value={password}
 				/>
 			</div>
 		</div>
@@ -35,8 +40,9 @@
 			</button>
 		</div>
 		<span class="flex flex-grow"></span>
-		<button class="rounded-md border border-zinc-900 h-min px-2 py-1" on:click={onLogin}
-			>Login</button
+		<button
+			class="rounded-md border border-zinc-900 h-min px-2 py-1"
+			on:click={() => onLogin(username, password)}>Login</button
 		>
 	</div>
 </div>

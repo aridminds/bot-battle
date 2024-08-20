@@ -13,9 +13,15 @@
     <ItemGroup>
         <PackageReference Include="CliWrap" Version="3.6.6"/>
         <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Services\Account\" />
         <Folder Include="wwwroot\"/>
     </ItemGroup>
 

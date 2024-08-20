@@ -129,7 +129,7 @@
 			>
 			<span class="flex flex-grow"></span>
 			<button class="rounded-md border border-zinc-900 h-min px-2 py-1" on:click={createLobby}
-				>Create lobby</button
+				>Create match</button
 			>
 		</div>
 	</div>
