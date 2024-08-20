@@ -70,7 +70,7 @@ public static class FireControlComputer
                     if (bullet.Status != BulletStatus.Hit) continue;
                     bullet.ShootingRange = -1;
                     var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
-                    if (!(distance <= BlastRadius)) continue;
+                    if (!(distance < BlastRadius)) continue;
                     var healthReduction = CalculateHealthReduction(distance);
                     CheckPlayerHealthAndCrateEventLog(boardState, tank, bullet, healthReduction);
                 }
