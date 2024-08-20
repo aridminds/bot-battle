@@ -1,7 +1,6 @@
 import type { Position } from './position';
 
 export type Obstacle = {
-	Id: String;
 	Position: Position;
 	Type: ObstacleType;
 };

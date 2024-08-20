@@ -7,7 +7,7 @@ namespace BotBattle.Engine.Services;
 public static class FireControlComputer
 {
     private const int BlastRadius = 3;
-    private const int FullBulletHit = 30;
+    public const int FullBulletHit = 30;
 
     public static void ShootBullet(int shootingPower, Tank currentTank, BoardState boardState)
     {
@@ -108,11 +108,14 @@ public static class FireControlComputer
         {
             player.Status = TankStatus.Dead;
             player.Health = 0;
+            player.DiedInTurn = boardState.Turns;
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true);
             boardState.EventLogs.Add(
                 EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, directHit));
         }
         else
         {
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false);
             boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player,
                 healthReduction, directHit));
         }
