@@ -1,5 +1,6 @@
 ﻿using BotBattle.Brain;
 using BotBattle.Brain.Models;
+using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.Services;
@@ -15,7 +16,7 @@ public static class StartPositionService
         do
         {
             newPosition = new Position(random.Next(0, boardState.Width),
-                random.Next(0, boardState.Height));
+                random.Next(0, boardState.Height), EnumHelper.GetRandomEnumValue<Direction>());
         } while (!IsPositionValid(newPosition, boardState));
 
         return newPosition;

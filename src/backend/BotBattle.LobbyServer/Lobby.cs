@@ -25,9 +25,8 @@ public class Lobby
         {
             tank.Position = StartPositionService.SetStartPosition(BoardState);
         }
-
        
-        for (var i = 0; i < 20; i++)
+        for (var i = 0; i < (arenaWidth * arenaHeight / 10); i++)
         {
             BoardState.Obstacles.Add(new Obstacle
             {
