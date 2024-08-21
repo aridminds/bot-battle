@@ -44,7 +44,8 @@ public static class FireControlComputer
                     break;
                 default:
                     bullet.CurrentPosition =
-                        NavigationSystem.CalculateNewPosition(boardState, bullet.CurrentPosition, bullet.CurrentPosition.Direction);
+                        NavigationSystem.CalculateNewPosition(boardState, bullet.CurrentPosition,
+                            bullet.CurrentPosition.Direction);
                     bullet.ShootingRange--;
                     break;
             }
@@ -67,11 +68,12 @@ public static class FireControlComputer
                 }
                 else
                 {
-                    if (bullet.Status != BulletStatus.Hit) continue;
+                    if (bullet.Status != BulletStatus.Hit && bullet.Status != BulletStatus.SuperHit) continue;
                     bullet.ShootingRange = -1;
                     var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
-                    if (!(distance < BlastRadius)) continue;
-                    var healthReduction = CalculateHealthReduction(distance);
+                    var blastRadius =  bullet.Status == BulletStatus.SuperHit ? 5 : BlastRadius;
+                    if (!(distance < blastRadius)) continue;
+                    var healthReduction = CalculateHealthReduction(distance, blastRadius);
                     CheckPlayerHealthAndCrateEventLog(boardState, tank, bullet, healthReduction);
                 }
             }
@@ -79,10 +81,20 @@ public static class FireControlComputer
             foreach (var obstacle in boardState.Obstacles)
             {
                 if (!bullet.CurrentPosition.Equals(obstacle.Position)) continue;
+                if (obstacle.Type is ObstacleType.Destroyed or ObstacleType.TreeSmall or ObstacleType.TreeLeaf or ObstacleType.OilStain) continue;
+                
                 bullet.ShootingRange = -1;
                 bullet.Status = BulletStatus.Hit;
                 if (obstacle.Type == ObstacleType.Stone) continue;
-                obstacle.Type = ObstacleType.Destroyed;
+                if (obstacle.Type == ObstacleType.OilBarrel) bullet.Status = BulletStatus.SuperHit;
+
+                obstacle.Type = obstacle.Type switch
+                {
+                    ObstacleType.TreeLarge => ObstacleType.Destroyed,
+                    ObstacleType.OilBarrel => ObstacleType.OilStain,
+                    _ => ObstacleType.Destroyed
+                };
+
                 obstacle.UpdateTurn = boardState.Turns;
             }
         }
@@ -95,9 +107,9 @@ public static class FireControlComputer
         return Math.Max(xDistance, yDistance);
     }
 
-    public static int CalculateHealthReduction(double distance)
+    public static int CalculateHealthReduction(double distance, int blastRadius = BlastRadius)
     {
-        return (int)(FullBulletHit * (1 - distance / BlastRadius));
+        return (int)(FullBulletHit * (1 - distance / blastRadius));
     }
 
     private static void CheckPlayerHealthAndCrateEventLog(BoardState boardState, Tank player, Bullet bullet,
@@ -109,13 +121,15 @@ public static class FireControlComputer
             player.Status = TankStatus.Dead;
             player.Health = 0;
             player.DiedInTurn = boardState.Turns;
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true, boardState);
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true,
+                boardState);
             boardState.EventLogs.Add(
                 EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, directHit));
         }
         else
         {
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false, boardState);
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false,
+                boardState);
             boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player,
                 healthReduction, directHit));
         }

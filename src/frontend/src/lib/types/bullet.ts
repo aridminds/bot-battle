@@ -11,5 +11,6 @@ export type Bullet = {
 export enum BulletStatus {
 	ShotStart,
 	InFlight,
-	Hit
+	Hit,
+	SuperHit
 }

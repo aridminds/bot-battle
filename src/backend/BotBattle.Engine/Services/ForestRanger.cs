@@ -11,6 +11,7 @@ public static class ForestRanger
         {
             if(obstacle.Type == ObstacleType.Stone || obstacle.Type == ObstacleType.TreeLarge) continue;
             if (boardState.Turns <= obstacle.UpdateTurn + 15) continue;
+            if(boardState.Tanks.Any(t => t.Position.Equals(obstacle.Position))) continue;
             
             obstacle.Type = obstacle.Type switch
             {

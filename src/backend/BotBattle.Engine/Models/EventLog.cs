@@ -20,4 +20,10 @@ public static class EventLogExtensions
     {
         return new EventLog ($"{winner.Name} has won the game!" , turn);
     }
+    
+    public static EventLog CreateIsStuckedEventLog(int turn, Tank stuckedTank)
+    {
+        return new EventLog ($"{stuckedTank.Name} is stucked" , turn);
+    }
+    
 }

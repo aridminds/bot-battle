@@ -16,6 +16,8 @@
 	let treeLeafImage: CanvasImageSource;
 	let treeSmallImage: CanvasImageSource;
 	let destroyedImage: CanvasImageSource;
+	let barrelRedImage: CanvasImageSource;
+	let oilStainImage: CanvasImageSource;
 
 	onMount(() => {
 		stoneImage = new Image();
@@ -32,6 +34,12 @@
 
 		destroyedImage = new Image();
 		destroyedImage.src = 'treeBrown_twigs.png';
+
+		barrelRedImage = new Image();
+		barrelRedImage.src = 'barrelRed_up.png';
+
+		oilStainImage = new Image();
+		oilStainImage.src = 'oil.png';
 	});
 
 	$: render = ({
@@ -65,6 +73,14 @@
 			case ObstacleType.TreeSmall:
 				scale = 1;
 				htmlImageElement = treeSmallImage;
+				break;
+			case ObstacleType.OilBarrel:
+				scale = 1;
+				htmlImageElement = barrelRedImage;
+				break;
+			case ObstacleType.OilStain:
+				scale = 1;
+				htmlImageElement = oilStainImage;
 				break;
 			default:
 			case ObstacleType.Destroyed:

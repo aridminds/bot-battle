@@ -26,12 +26,12 @@ public class Lobby
             tank.Position = StartPositionService.SetStartPosition(BoardState);
         }
        
-        for (var i = 0; i < (arenaWidth * arenaHeight / 10); i++)
+        for (var i = 0; i < arenaHeight; i++)
         {
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed)
+                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
             });
         }
 
@@ -47,7 +47,7 @@ public class Lobby
         {
             if (BoardState.Status == GameStatus.GameOver) return;
 
-            if (_currentTank.Status == TankStatus.Alive)
+            if (_currentTank.Status != TankStatus.Dead)
             {
                 var data = await CallDataSource();
                 var payloadHash = MD5.HashData(BitConverter.GetBytes(data.Item1 * data.Item2));

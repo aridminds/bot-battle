@@ -16,7 +16,19 @@ public class GameMaster
         var currentTank = boardState.Tanks.First(t => t.Name == tank.Name);
         if (currentTank.Status == TankStatus.Dead) return boardState;
 
-        currentTank.Position = MoveTank(tankAction.Rotation, currentTank.Position, boardState);
+        if (currentTank.Status == TankStatus.IsStucked)
+        {
+            boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, currentTank));
+            currentTank.Status = currentTank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
+        }
+        else
+        {
+            currentTank.Position = MoveTank(tankAction.Rotation, currentTank.Position, boardState);
+            if (NavigationSystem.IsDroveIntoAnOilStain(currentTank.Position, boardState))
+            {
+                currentTank.Status = TankStatus.IsStucked;
+            }
+        }
 
         if (tankAction.ShouldShoot)
             FireControlComputer.ShootBullet(tankAction.RawShootingRange, currentTank, boardState);
