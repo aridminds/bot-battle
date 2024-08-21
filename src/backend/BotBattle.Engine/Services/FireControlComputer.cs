@@ -109,13 +109,13 @@ public static class FireControlComputer
             player.Status = TankStatus.Dead;
             player.Health = 0;
             player.DiedInTurn = boardState.Turns;
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true);
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true, boardState);
             boardState.EventLogs.Add(
                 EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, directHit));
         }
         else
         {
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false);
+            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false, boardState);
             boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player,
                 healthReduction, directHit));
         }
