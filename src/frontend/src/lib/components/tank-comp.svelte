@@ -21,7 +21,10 @@
 		logo.src = `tank_dark.svg`;
 	});
 
-	const position = tweened([canvasWidth / 2, canvasHeight / 2], { duration: 500, easing });
+	const position = tweened(
+		[tank.Position.X * (canvasWidth / arenaWidth), tank.Position.Y * (canvasHeight / arenaHeight)],
+		{ duration: 500, easing }
+	);
 
 	$: render = ({
 		context,

@@ -80,7 +80,7 @@
 						<ObstacleComp {obstacle} {tileSize} arenaHeight={lobby.height} arenaWidth={lobby.width}
 						></ObstacleComp>
 					{/each}
-					{#each bullets as bullet}
+					{#each bullets as bullet (bullet.Id)}
 						<BulletComp
 							{bullet}
 							{tileSize}
