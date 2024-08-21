@@ -1,27 +1,29 @@
 using System.Collections.Concurrent;
+using System.Text.Json;
 using BotBattle.Api.Lobbies;
 using BotBattle.Api.Options;
 using BotBattle.Api.Services;
 using BotBattle.Engine.Models;
+using BotBattle.Engine.Models.Lobby;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 
 namespace BotBattle.Api.Matchmaking;
 
 public class Matchmaking
 {
-    private readonly ConcurrentDictionary<string, LobbyProcess> _currentLobbies = [];
-
-    private readonly BroadcastService<BoardState> _broadcastService;
+    private readonly ConcurrentDictionary<Guid, LobbyProcess> _currentLobbies = [];
     private ConcurrentStack<string> _availablePlayers;
     private readonly string _pathToLobbyServerExecutable;
     private readonly int _maximumConcurrentLobbies;
     private readonly int[] _arenaDimensions;
     private readonly int _roundDuration;
     private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly IConnectionMultiplexer _connectionMultiplexer;
 
-    public Matchmaking(BroadcastService<BoardState> broadcastService, IOptions<MatchmakingOptions> matchmakingOptions)
+    public Matchmaking(IOptions<MatchmakingOptions> matchmakingOptions, IConnectionMultiplexer connectionMultiplexer)
     {
-        _broadcastService = broadcastService;
+        _connectionMultiplexer = connectionMultiplexer;
         _availablePlayers = new ConcurrentStack<string>(matchmakingOptions.Value.AvailablePlayers);
         _pathToLobbyServerExecutable = matchmakingOptions.Value.PathToLobbyServerExecutable;
         _maximumConcurrentLobbies = matchmakingOptions.Value.MaximumConcurrentLobbies;
@@ -35,9 +37,9 @@ public class Matchmaking
         return _currentLobbies.Values.ToArray();
     }
 
-    public LobbyProcess? GetLobbyForId(int id)
+    public LobbyProcess? GetLobbyForId(Guid id)
     {
-        return _currentLobbies.GetValueOrDefault(id.ToString());
+        return _currentLobbies.GetValueOrDefault(id);
     }
 
     public LobbyProcess? CreateNewLobby(int lobbySize, int roundDuration, int[] areaDimensions, int[] mapTiles)
@@ -49,8 +51,19 @@ public class Matchmaking
             _pathToLobbyServerExecutable,
             _cancellationTokenSource.Token);
 
-        newLobby.Start(_broadcastService);
-        _currentLobbies.TryAdd(newLobby.ProcessId.ToString(), newLobby);
+        var database = _connectionMultiplexer.GetDatabase();
+        var lobbyKey = $"lobby:{newLobby.LobbyId}";
+
+        database.StringSet(lobbyKey, JsonSerializer.Serialize(new LobbyOptions
+        {
+            Players = newPlayerPair,
+            ArenaDimension = areaDimensions,
+            RoundDuration = roundDuration,
+            MapTiles = mapTiles,
+        }));
+
+        newLobby.Start();
+        _currentLobbies.TryAdd(newLobby.LobbyId, newLobby);
 
         newLobby.LobbyFinished += OnLobbyFinished;
         return newLobby;
@@ -65,7 +78,7 @@ public class Matchmaking
     private void OnLobbyFinished(object? sender, LobbyProcess lobby)
     {
         _availablePlayers.PushRange(lobby.Players);
-        _currentLobbies.TryRemove(lobby.ProcessId.ToString(), out _);
+        _currentLobbies.TryRemove(lobby.LobbyId, out _);
     }
 
     private string[] GetNewPlayerPair(int lobbySize = 2)

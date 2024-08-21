@@ -8,7 +8,6 @@ namespace BotBattle.Api.Lobbies;
 
 public class LobbyProcess
 {
-    private readonly Channel<BoardState> _boardStateChannel = Channel.CreateUnbounded<BoardState>();
     private readonly CancellationToken _cancellationToken;
 
     private readonly string _pathToLobbyServerExecutable;
@@ -25,7 +24,7 @@ public class LobbyProcess
         _cancellationToken = cancellationToken;
     }
 
-    public int ProcessId { get; private set; }
+    public Guid LobbyId { get; private set; } = Guid.NewGuid();
     public int Width => ArenaDimension[0];
     public int Height => ArenaDimension[1];
     public string[] Players { get; }
@@ -34,41 +33,24 @@ public class LobbyProcess
 
     public event EventHandler<LobbyProcess> LobbyFinished;
 
-    public void Start(BroadcastService<BoardState> broadcast)
+    public void Start()
     {
         var task = Cli
-                       .Wrap(_pathToLobbyServerExecutable)
-                       .WithArguments([
-                           string.Join(',', Players),
-                           string.Join(',', ArenaDimension),
-                           _roundDuration.ToString(),
-                           string.Join(',', MapTiles)
-                       ]) |
-                   (async stdOutput =>
-                   {
-                       var boardState = JsonSerializer.Deserialize<BoardState>(stdOutput);
-
-                       if (boardState == null)
-                           return;
-
-                       await _boardStateChannel.Writer.WriteAsync(boardState, _cancellationToken);
-                   });
+            .Wrap(_pathToLobbyServerExecutable)
+            .WithArguments([
+                LobbyId.ToString()
+            ]);
 
         var process = task.ExecuteAsync(_cancellationToken);
-        ProcessId = process.ProcessId;
 
-        Task.Factory.StartNew(
-            b => RunAsync(((BroadcastService<BoardState>, CommandTask<CommandResult>))b!),
-            (broadcast, process), _cancellationToken);
+        Task.Factory.StartNew(b => RunAsync((CommandTask<CommandResult>)b!), process, _cancellationToken);
     }
 
-    private async void RunAsync((BroadcastService<BoardState>, CommandTask<CommandResult>) tupleOfServices)
+    private async void RunAsync(CommandTask<CommandResult> commandTask)
     {
-        _ = tupleOfServices.Item1.Broadcast(_boardStateChannel.Reader, _cancellationToken);
-
         try
         {
-            await tupleOfServices.Item2;
+            await commandTask;
         }
         catch (OperationCanceledException e)
         {
