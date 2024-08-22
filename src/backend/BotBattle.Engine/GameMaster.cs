@@ -33,7 +33,7 @@ public class GameMaster
                             FireControlComputer.DealDamage(tank, tank, FireControlComputer.FullBulletHit, HitType.JamExplosion, boardState);
                             break;
                         }
-                        boardState.EventLogs.Add(new EventLog($"{tank.Name} tried to shoot while reloading.", boardState.Turns));
+                        boardState.EventLogs.Add(new EventLog { Message = $"{tank.Name} tried to shoot while reloading.", Turn = boardState.Turns });
                         break;
                     }
                     FireControlComputer.ShootBullet(shoot.Power, tank, boardState);

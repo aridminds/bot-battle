@@ -7,7 +7,7 @@ namespace BotBattle.Engine.Models;
 [MessagePackObject]
 public class EventLog
 {
-    [Key(0)] public string Message { get; init; }
+    [Key(0)] public required string Message { get; init; }
 
     [Key(1)] public int Turn { get; init; }
 }
