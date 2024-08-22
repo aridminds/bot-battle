@@ -12,8 +12,22 @@ public class GameMaster
         boardState.Turns++;
 
         FireControlComputer.CheckBullets(boardState);
-
+      
         if (tank.WeaponSystem.ActiveFireCooldown > 0) tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.ActiveFireCooldown - 1 };
+
+        if (currentTank.Status == TankStatus.IsStucked)
+        {
+            boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, currentTank));
+            currentTank.Status = currentTank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
+        }
+        else
+        {
+            currentTank.Position = MoveTank(tankAction.Rotation, currentTank.Position, boardState);
+            if (NavigationSystem.IsDroveIntoAnOilStain(currentTank.Position, boardState))
+            {
+                currentTank.Status = TankStatus.IsStucked;
+            }
+        }
 
         foreach (var action in TankCalculator.CalculateNextAction(payloadHashString, tank))
         {

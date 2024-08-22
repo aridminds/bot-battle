@@ -1,11 +1,13 @@
 ﻿using BotBattle.Brain.Models;
 using BotBattle.Engine.Models;
+using BotBattle.Engine.Models.States;
 
 namespace BotBattle.Engine.Services;
 
 public static class NavigationSystem
 {
     private const int AwayFromBorderOffset = 0;
+   
     
     public static Position CalculateNewPosition(BoardState boardState, Position currentPosition, Direction direction)
     {
@@ -18,7 +20,12 @@ public static class NavigationSystem
     public static bool IsPositionOccupied(Position position, BoardState boardState)
     {
         return boardState.Tanks.Any(player => player.Position.Equals(position))
-               || boardState.Obstacles.Any(obstacle => obstacle.Position.Equals(position));
+               || boardState.Obstacles.Any(obstacle => obstacle.Position.Equals(position) && obstacle.Type.IsBlockingMovement());
+    }
+    
+    public static bool IsDroveIntoAnOilStain(Position position, BoardState boardState)
+    {
+        return boardState.Obstacles.Any(obstacle => obstacle.Type == ObstacleType.OilStain && obstacle.Position.Equals(position));
     }
     
     private static Position CalculateNewPosition(Position currentPosition, Direction direction)

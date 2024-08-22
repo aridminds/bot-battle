@@ -31,7 +31,7 @@ public class Lobby
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed)
+                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
             });
         }
 
@@ -47,7 +47,7 @@ public class Lobby
         {
             if (BoardState.Status == GameStatus.GameOver) return;
 
-            if (_currentTank.Status == TankStatus.Alive)
+            if (_currentTank.Status != TankStatus.Dead)
             {
                 var data = await CallDataSource();
                 var payloadHash = MD5.HashData(BitConverter.GetBytes(data.Item1 * data.Item2));

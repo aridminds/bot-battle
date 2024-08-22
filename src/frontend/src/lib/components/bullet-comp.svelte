@@ -46,8 +46,12 @@
 		// position.set([x, y]);
 		// let [xx, yy] = $position;
 
-		if (bullet.Status === BulletStatus.Hit) {
-			const scale = 3;
+		if (bullet.Status === BulletStatus.Hit || bullet.Status === BulletStatus.SuperHit) {
+			var scale = 3;
+
+			if (bullet.Status === BulletStatus.SuperHit) {
+				scale = 5;
+			}
 
 			context.drawImage(
 				explosionImage as HTMLImageElement,

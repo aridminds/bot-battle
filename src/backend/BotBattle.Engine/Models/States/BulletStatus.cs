@@ -5,4 +5,5 @@ public enum BulletStatus
     ShotStart,
     InFlight,
     Hit,
+    SuperHit
 }

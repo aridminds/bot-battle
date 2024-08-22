@@ -10,5 +10,7 @@ export enum ObstacleType {
 	TreeLeaf = 1,
 	TreeSmall = 2,
 	TreeLarge = 3,
-	Stone = 4
+	Stone = 4,
+	OilBarrel = 5,
+	OilStain = 6
 }

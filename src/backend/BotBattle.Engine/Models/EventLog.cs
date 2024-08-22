@@ -53,4 +53,10 @@ public static class EventLogExtensions
             _ => "Unknown",
         };
     }
+    
+    public static EventLog CreateIsStuckedEventLog(int turn, Tank stuckedTank)
+    {
+        return new EventLog ($"{stuckedTank.Name} is stucked" , turn);
+    }
+    
 }
