@@ -65,7 +65,10 @@
 							></GroundTile>
 						{/each}
 					{/each}
-
+					{#each obstacles as obstacle}
+						<ObstacleComp {obstacle} {tileSize} arenaHeight={lobby.height} arenaWidth={lobby.width}
+						></ObstacleComp>
+					{/each}
 					{#each tanks as tank}
 						<TankComp
 							{tank}
@@ -75,10 +78,6 @@
 							arenaHeight={lobby.height}
 							arenaWidth={lobby.width}
 						></TankComp>
-					{/each}
-					{#each obstacles as obstacle}
-						<ObstacleComp {obstacle} {tileSize} arenaHeight={lobby.height} arenaWidth={lobby.width}
-						></ObstacleComp>
 					{/each}
 					{#each bullets as bullet}
 						<BulletComp

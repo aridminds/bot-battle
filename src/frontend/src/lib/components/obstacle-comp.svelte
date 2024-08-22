@@ -36,10 +36,10 @@
 		destroyedImage.src = 'treeBrown_twigs.png';
 
 		barrelRedImage = new Image();
-		barrelRedImage.src = 'barrelRed_up.png';
+		barrelRedImage.src = 'barrelBlack_top.png';
 
 		oilStainImage = new Image();
-		oilStainImage.src = 'oil.png';
+		oilStainImage.src = 'oilSpill_large.png';
 	});
 
 	$: render = ({
@@ -75,15 +75,16 @@
 				htmlImageElement = treeSmallImage;
 				break;
 			case ObstacleType.OilBarrel:
-				scale = 1;
+				scale = 0.6;
 				htmlImageElement = barrelRedImage;
 				break;
 			case ObstacleType.OilStain:
-				scale = 1;
+				scale = 1.5;
 				htmlImageElement = oilStainImage;
 				break;
 			default:
 			case ObstacleType.Destroyed:
+				scale = 0.6;
 				htmlImageElement = destroyedImage;
 				break;
 		}

@@ -12,21 +12,17 @@ public class GameMaster
         boardState.Turns++;
 
         FireControlComputer.CheckBullets(boardState);
-      
-        if (tank.WeaponSystem.ActiveFireCooldown > 0) tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.ActiveFireCooldown - 1 };
 
-        if (currentTank.Status == TankStatus.IsStucked)
-        {
-            boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, currentTank));
-            currentTank.Status = currentTank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
-        }
-        else
-        {
-            currentTank.Position = MoveTank(tankAction.Rotation, currentTank.Position, boardState);
-            if (NavigationSystem.IsDroveIntoAnOilStain(currentTank.Position, boardState))
+        if (tank.WeaponSystem.ActiveFireCooldown > 0)
+            tank.WeaponSystem = tank.WeaponSystem with
             {
-                currentTank.Status = TankStatus.IsStucked;
-            }
+                ActiveFireCooldown = tank.WeaponSystem.ActiveFireCooldown - 1
+            };
+
+        if (tank.Status == TankStatus.IsStucked)
+        {
+            boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, tank));
+            tank.Status = tank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
         }
 
         foreach (var action in TankCalculator.CalculateNextAction(payloadHashString, tank))
@@ -37,19 +33,31 @@ public class GameMaster
                     tank.Position.Direction = rotate.Direction;
                     break;
                 case Drive:
+                    if (tank.Status == TankStatus.IsStucked)
+                        break;
+
                     tank.Position = MoveTank(tank.Position.Direction, tank.Position, boardState);
+                    if (NavigationSystem.IsDroveIntoAnOilStain(tank.Position, boardState))
+                    {
+                        tank.Status = TankStatus.IsStucked;
+                    }
+
                     break;
                 case Shoot shoot:
                     if (!tank.WeaponSystem.CanShoot)
                     {
                         if (Random.Shared.NextDouble() < .2d)
                         {
-                            FireControlComputer.DealDamage(tank, tank, FireControlComputer.FullBulletHit, HitType.JamExplosion, boardState);
+                            FireControlComputer.DealDamage(tank, tank, FireControlComputer.FullBulletHit,
+                                HitType.JamExplosion, boardState);
                             break;
                         }
-                        boardState.EventLogs.Add(new EventLog { Message = $"{tank.Name} tried to shoot while reloading.", Turn = boardState.Turns });
+
+                        boardState.EventLogs.Add(new EventLog
+                            { Message = $"{tank.Name} tried to shoot while reloading.", Turn = boardState.Turns });
                         break;
                     }
+
                     FireControlComputer.ShootBullet(shoot.Power, tank, boardState);
                     tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.FireCooldown };
                     break;

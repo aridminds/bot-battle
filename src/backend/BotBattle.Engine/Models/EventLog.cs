@@ -19,7 +19,8 @@ public static class EventLogExtensions
         var directHitMessage = hitType == HitType.Bullet ? "directly " : "";
         return new EventLog
         {
-            Message = $"{shooter.Name} {directHitMessage}hit {target.Name} for {healthReduction} damage ({hitType.TranslateHitType()})",
+            Message =
+                $"{shooter.Name} {directHitMessage}hit {target.Name} for {healthReduction} damage ({hitType.TranslateHitType()})",
             Turn = turn
         };
     }
@@ -53,10 +54,13 @@ public static class EventLogExtensions
             _ => "Unknown",
         };
     }
-    
+
     public static EventLog CreateIsStuckedEventLog(int turn, Tank stuckedTank)
     {
-        return new EventLog ($"{stuckedTank.Name} is stucked" , turn);
+        return new EventLog
+        {
+            Message = $"{stuckedTank.Name} is stucked",
+            Turn = turn
+        };
     }
-    
 }
