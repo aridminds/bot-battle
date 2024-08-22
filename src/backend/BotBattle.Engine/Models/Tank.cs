@@ -18,4 +18,6 @@ public class Tank
     
     [Key(3)]
     public TankStatus Status { get; set; } = TankStatus.Alive;
+    public int PointRegister {get; set;} = 0;
+    public int DiedInTurn {get; set;} = -1;
 }
