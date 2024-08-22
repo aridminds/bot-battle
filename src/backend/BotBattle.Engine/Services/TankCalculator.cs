@@ -2,13 +2,12 @@
 using BotBattle.Brain;
 using BotBattle.Brain.Models;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
 
 namespace BotBattle.Engine.Services;
 
 public static class TankCalculator
 {
-    public static TankAction CalculateNextAction(string payloadHashString)
+    public static IEnumerable<ITankAction> CalculateNextAction(string payloadHashString, Tank tank)
     {
         var direction = payloadHashString[..2];
         var shootingRange = payloadHashString[2..4];
@@ -16,15 +15,10 @@ public static class TankCalculator
 
         var rawShootingRange = int.Parse(shootingRange, NumberStyles.HexNumber);
 
-        return new TankAction
-        {
-            Rotation = MapToDirection(int.Parse(direction, NumberStyles.HexNumber)),
-            ShouldShoot = actionDecision[0] % 2 == 0,
-            RawShootingRange = rawShootingRange
-        };
+        yield return new Rotate(MapToDirection(int.Parse(direction, NumberStyles.HexNumber)));
+        yield return new Drive();
+        if (actionDecision[0] % 2 == 0 && (Random.Shared.NextDouble() < 0.1d || tank.WeaponSystem.CanShoot)) yield return tank.Shoot(rawShootingRange);
     }
-
-    
 
     private static Direction MapToDirection(int value)
     {

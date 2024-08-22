@@ -9,6 +9,26 @@ public static class FireControlComputer
     private const int BlastRadius = 3;
     public const int FullBulletHit = 30;
 
+    public static void DealDamage(Tank source, Tank target, int amount, HitType hitType, BoardState boardState)
+    {
+        target.Health -= amount;
+        if (target.Health <= 0)
+        {
+            target.Status = TankStatus.Dead;
+            target.Health = 0;
+            target.DiedInTurn = boardState.Turns;
+            PointJudge.CalculatePoints(source, amount, source.Name == target.Name, true, boardState);
+            boardState.EventLogs.Add(
+                EventLogExtensions.CreateKillEventLog(boardState.Turns, source, target, hitType));
+        }
+        else
+        {
+            PointJudge.CalculatePoints(source, amount, source.Name == target.Name, false, boardState);
+            boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, source, target,
+                amount, hitType));
+        }
+    }
+
     public static void ShootBullet(int shootingPower, Tank currentTank, BoardState boardState)
     {
         var shootingRange =
@@ -63,7 +83,7 @@ public static class FireControlComputer
                     if (tank == bullet.Shooter) continue;
                     bullet.ShootingRange = -1;
                     bullet.Status = BulletStatus.Hit;
-                    CheckPlayerHealthAndCrateEventLog(boardState, tank, bullet, FullBulletHit, true);
+                    DealDamage(bullet.Shooter, tank, FullBulletHit, HitType.Bullet, boardState);
                 }
                 else
                 {
@@ -72,7 +92,7 @@ public static class FireControlComputer
                     var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
                     if (!(distance < BlastRadius)) continue;
                     var healthReduction = CalculateHealthReduction(distance);
-                    CheckPlayerHealthAndCrateEventLog(boardState, tank, bullet, healthReduction);
+                    DealDamage(bullet.Shooter, tank, healthReduction, HitType.BulletBlast, boardState);
                 }
             }
 
@@ -98,27 +118,6 @@ public static class FireControlComputer
     public static int CalculateHealthReduction(double distance)
     {
         return (int)(FullBulletHit * (1 - distance / BlastRadius));
-    }
-
-    private static void CheckPlayerHealthAndCrateEventLog(BoardState boardState, Tank player, Bullet bullet,
-        int healthReduction, bool directHit = false)
-    {
-        player.Health -= FullBulletHit;
-        if (player.Health <= 0)
-        {
-            player.Status = TankStatus.Dead;
-            player.Health = 0;
-            player.DiedInTurn = boardState.Turns;
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, true, boardState);
-            boardState.EventLogs.Add(
-                EventLogExtensions.CreateKillEventLog(boardState.Turns, bullet.Shooter, player, directHit));
-        }
-        else
-        {
-            PointJudge.CalculatePoints(bullet.Shooter, healthReduction, bullet.Shooter.Name == player.Name, false, boardState);
-            boardState.EventLogs.Add(EventLogExtensions.CreateHitEventLog(boardState.Turns, bullet.Shooter, player,
-                healthReduction, directHit));
-        }
     }
 
     public static int CalculateShootingRange(int shootingPower, int gridWidth, int gridHeight,
