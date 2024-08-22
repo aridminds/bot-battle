@@ -18,10 +18,11 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
+        <PackageReference Include="MessagePack" Version="2.5.172" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Services\Account\" />
         <Folder Include="wwwroot\"/>
     </ItemGroup>
 

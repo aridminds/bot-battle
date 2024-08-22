@@ -1,17 +1,18 @@
 using System.Security.Claims;
-using System.Text.Json;
 using BotBattle.Api;
 using BotBattle.Api.Matchmaking;
 using BotBattle.Api.Models;
 using BotBattle.Api.Models.Account;
+using BotBattle.Api.Models.LobbySpawner;
 using BotBattle.Api.Options;
 using BotBattle.Api.Services;
-using BotBattle.Engine.Models;
+using BotBattle.Api.Services.LobbySpawner;
 using BotBattle.Engine.Services.Map;
 using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,14 @@ builder.Services.Configure<MatchmakingOptions>(matchmakingOptions);
 builder.Services.AddCors();
 builder.Services.AddSingleton<Matchmaking>();
 builder.Services.AddSingleton(typeof(BroadcastService<>));
+builder.Services.AddSingleton(typeof(ILobbySpawner<DaemonLobbyOptions>), typeof(DaemonLobbySpawner));
 builder.Services.AddHostedService<MatchmakingHostedService>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
+{
+    EndPoints = { "localhost:6379" },
+    AbortOnConnectFail = false,
+    ConnectRetry = 5,
+}));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options => { options.Cookie.Name = "bot-battle-auth"; });
@@ -157,7 +165,7 @@ apiGroup.MapGet("/matchmaking/lobbies", (Matchmaking matchmaking) =>
 
     return Results.Ok(lobbies.Select(lobby => new
     {
-        Name = lobby.ProcessId
+        Name = lobby.LobbyId
     }));
 });
 
@@ -168,10 +176,10 @@ apiGroup.MapPost("/matchmaking/lobbies", (CreateLobbyRequest request, Matchmakin
 
     return lobby == null
         ? Results.BadRequest()
-        : Results.Created($"/matchmaking/lobbies/{lobby.ProcessId}", new { lobby.ProcessId });
+        : Results.Created($"/matchmaking/lobbies/{lobby.LobbyId}", new { lobby.LobbyId });
 }).RequireAuthorization();
 
-apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking matchmaking) =>
+apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:guid}", (Guid lobbyId, Matchmaking matchmaking) =>
 {
     var lobby = matchmaking.GetLobbyForId(lobbyId);
 
@@ -180,7 +188,7 @@ apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking 
 
     return Results.Ok(new
     {
-        name = lobby.ProcessId,
+        name = lobby.LobbyId,
         width = lobby.Width,
         height = lobby.Height,
         players = lobby.Players,
@@ -188,9 +196,9 @@ apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:int}", (int lobbyId, Matchmaking 
     });
 });
 
-apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:int}/sse",
-    async (int lobbyId, Matchmaking matchmaking, HttpContext httpContext, BroadcastService<BoardState> broadcastService,
-        CancellationToken cancellation) =>
+apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:guid}/sse",
+    async (Guid lobbyId, Matchmaking matchmaking, HttpContext httpContext,
+        IConnectionMultiplexer connectionMultiplexer, CancellationToken cancellation) =>
     {
         var lobby = matchmaking.GetLobbyForId(lobbyId);
 
@@ -200,15 +208,16 @@ apiGroup.MapGet("/matchmaking/lobbies/{lobbyId:int}/sse",
         var response = httpContext.Response;
         response.Headers.Append("Content-Type", "text/event-stream");
 
-        using var subscription = broadcastService.RegisterOutboundChannel();
+        var subscriber = connectionMultiplexer.GetSubscriber();
+        var source = await subscriber.SubscribeAsync(lobbyId.ToString());
 
         while (!cancellation.IsCancellationRequested)
         {
-            await foreach (var boardState in subscription.Reader.ReadAllAsync(cancellation))
+            await foreach (var message in source)
             {
-                await response.WriteAsync(
-                    $"data: {JsonSerializer.Serialize(boardState)}{Environment.NewLine}{Environment.NewLine}",
+                await response.WriteAsync($"data: {message.Message}{Environment.NewLine}{Environment.NewLine}",
                     cancellation);
+
                 await response.Body.FlushAsync(cancellation);
             }
 
