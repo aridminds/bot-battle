@@ -1,5 +1,4 @@
-﻿using BotBattle.Brain;
-using BotBattle.Brain.Models;
+﻿using BotBattle.Brain.Models;
 using BotBattle.Engine.Models.States;
 using MessagePack;
 

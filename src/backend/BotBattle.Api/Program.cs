@@ -1,15 +1,14 @@
 using System.Security.Claims;
-using System.Text.Json;
 using BotBattle.Api;
 using BotBattle.Api.Matchmaking;
 using BotBattle.Api.Models;
 using BotBattle.Api.Models.Account;
+using BotBattle.Api.Models.LobbySpawner;
 using BotBattle.Api.Options;
 using BotBattle.Api.Services;
-using BotBattle.Engine.Models;
+using BotBattle.Api.Services.LobbySpawner;
 using BotBattle.Engine.Services.Map;
 using Isopoh.Cryptography.Argon2;
-using MessagePack;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +22,7 @@ builder.Services.Configure<MatchmakingOptions>(matchmakingOptions);
 builder.Services.AddCors();
 builder.Services.AddSingleton<Matchmaking>();
 builder.Services.AddSingleton(typeof(BroadcastService<>));
+builder.Services.AddSingleton(typeof(ILobbySpawner<DaemonLobbyOptions>), typeof(DaemonLobbySpawner));
 builder.Services.AddHostedService<MatchmakingHostedService>();
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
 {

@@ -1,5 +1,4 @@
-﻿using BotBattle.Engine.Models;
-using MessagePack;
+﻿using MessagePack;
 
 namespace BotBattle.Engine.Models;
 

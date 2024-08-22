@@ -1,7 +1,4 @@
-﻿using BotBattle.Brain;
-using BotBattle.Brain.Models;
-using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
+﻿using BotBattle.Brain.Models;
 using BotBattle.Engine.Services;
 
 namespace BotBattle.Tests.Services;
