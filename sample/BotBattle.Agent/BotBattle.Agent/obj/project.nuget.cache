@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "jIPJ3GlWo+0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\dmkk3r\\source\\repos\\bot-battle\\sample\\BotBattle.Agent\\BotBattle.Agent\\BotBattle.Agent.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\dmkk3r\\.nuget\\packages\\extism.pdk\\1.0.3\\extism.pdk.1.0.3.nupkg.sha512",
+    "C:\\Users\\dmkk3r\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.8\\microsoft.net.illink.tasks.8.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
