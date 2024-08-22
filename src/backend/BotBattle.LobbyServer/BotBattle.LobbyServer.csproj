@@ -11,4 +11,10 @@
         <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="MessagePack" Version="2.5.172" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="StackExchange.Redis" Version="2.8.0"/>
+    </ItemGroup>
+
 </Project>

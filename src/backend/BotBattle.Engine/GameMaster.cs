@@ -7,14 +7,13 @@ namespace BotBattle.Engine;
 
 public class GameMaster
 {
-    public BoardState NextRound(string payloadHashString, BoardState boardState, Tank tank)
+    public static void NextRound(string payloadHashString, BoardState boardState, Tank tank)
     {
         boardState.Turns++;
 
         FireControlComputer.CheckBullets(boardState);
-        var tankAction = TankCalculator.CalculateNextAction(payloadHashString);
-        var currentTank = boardState.Tanks.First(t => t.Name == tank.Name);
-        if (currentTank.Status == TankStatus.Dead) return boardState;
+      
+        if (tank.WeaponSystem.ActiveFireCooldown > 0) tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.ActiveFireCooldown - 1 };
 
         if (currentTank.Status == TankStatus.IsStucked)
         {
@@ -30,14 +29,36 @@ public class GameMaster
             }
         }
 
-        if (tankAction.ShouldShoot)
-            FireControlComputer.ShootBullet(tankAction.RawShootingRange, currentTank, boardState);
+        foreach (var action in TankCalculator.CalculateNextAction(payloadHashString, tank))
+        {
+            switch (action)
+            {
+                case Rotate rotate:
+                    tank.Position.Direction = rotate.Direction;
+                    break;
+                case Drive:
+                    tank.Position = MoveTank(tank.Position.Direction, tank.Position, boardState);
+                    break;
+                case Shoot shoot:
+                    if (!tank.WeaponSystem.CanShoot)
+                    {
+                        if (Random.Shared.NextDouble() < .2d)
+                        {
+                            FireControlComputer.DealDamage(tank, tank, FireControlComputer.FullBulletHit, HitType.JamExplosion, boardState);
+                            break;
+                        }
+                        boardState.EventLogs.Add(new EventLog { Message = $"{tank.Name} tried to shoot while reloading.", Turn = boardState.Turns });
+                        break;
+                    }
+                    FireControlComputer.ShootBullet(shoot.Power, tank, boardState);
+                    tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.FireCooldown };
+                    break;
+            }
+        }
 
         FireControlComputer.CalculateIsSomeoneHit(boardState);
         CheckForWinner(boardState);
         ForestRanger.GrowUpTrees(boardState);
-
-        return boardState;
     }
 
     private static void CheckForWinner(BoardState boardState)

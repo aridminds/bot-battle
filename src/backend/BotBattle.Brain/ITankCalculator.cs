@@ -4,5 +4,5 @@ namespace BotBattle.Brain;
 
 public interface ITankCalculator
 {
-    public TankAction CalculateNextAction();
+    public IEnumerable<ITankAction> CalculateNextAction();
 }

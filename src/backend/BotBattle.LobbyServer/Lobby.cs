@@ -19,14 +19,14 @@ public class Lobby
         BoardState = new BoardState(arenaWidth, arenaHeight);
 
         foreach (var playerName in playerNames)
-            BoardState.Tanks.Add(new Tank { Name = playerName });
+            BoardState.Tanks.Add(new Tank { Name = playerName, WeaponSystem = new WeaponSystem { FireCooldown = 2 } });
 
         foreach (var tank in BoardState.Tanks)
         {
             tank.Position = StartPositionService.SetStartPosition(BoardState);
         }
-       
-        for (var i = 0; i < arenaHeight; i++)
+
+        for (var i = 0; i < (arenaWidth * arenaHeight * 0.05d); i++)
         {
             BoardState.Obstacles.Add(new Obstacle
             {
@@ -53,7 +53,7 @@ public class Lobby
                 var payloadHash = MD5.HashData(BitConverter.GetBytes(data.Item1 * data.Item2));
                 var payloadHashString = BitConverter.ToString(payloadHash).Replace("-", "");
 
-                BoardState = _gameMaster.NextRound(payloadHashString, BoardState, _currentTank);
+                GameMaster.NextRound(payloadHashString, BoardState, _currentTank);
                 onNewBoardState?.Invoke(BoardState);
             }
 

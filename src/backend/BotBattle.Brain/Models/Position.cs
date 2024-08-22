@@ -1,10 +1,26 @@
-﻿namespace BotBattle.Brain.Models;
+﻿using MessagePack;
 
-public class Position(int x, int y, Direction direction= Direction.North)
+namespace BotBattle.Brain.Models;
+
+[MessagePackObject]
+public class Position
 {
-    public int X { get; set; } = x;
-    public int Y { get; set; } = y;
-    public Direction Direction { get; set; } = direction;
+    public Position()
+    {
+    }
+
+    public Position(int x, int y, Direction direction = Direction.North)
+    {
+        X = x;
+        Y = y;
+        Direction = direction;
+    }
+
+    [Key(0)] public int X { get; set; }
+
+    [Key(1)] public int Y { get; set; }
+
+    [Key(2)] public Direction Direction { get; set; }
 
     public override bool Equals(object? obj)
     {
