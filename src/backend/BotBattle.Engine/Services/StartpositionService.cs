@@ -1,4 +1,5 @@
-using BotBattle.Brain.Models;
+﻿using BotBattle.Brain.Models;
+using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.Services;
@@ -26,7 +27,7 @@ public static class StartPositionService
             if (otherPlayer.Position.Y != 0 && otherPlayer.Position.X != 0 &&
                 GetDistance(position, otherPlayer.Position) < MinDistanceBetweenPlayers)
                 return false;
-        
+
         foreach (var obstacle in boardState.Obstacles)
             if (obstacle.Position.Y != 0 && obstacle.Position.X != 0 &&
                 GetDistance(position, obstacle.Position) < MinDistanceBetweenPlayers)
