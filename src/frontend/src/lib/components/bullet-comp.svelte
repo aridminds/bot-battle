@@ -43,8 +43,8 @@
 	}) => {
 		const x = bullet.CurrentPosition.X * (width / arenaWidth);
 		const y = bullet.CurrentPosition.Y * (height / arenaHeight);
-		// position.set([x, y]);
-		// let [xx, yy] = $position;
+		position.set([x, y]);
+		let [xx, yy] = $position;
 
 		if (bullet.Status === BulletStatus.Hit || bullet.Status === BulletStatus.SuperHit) {
 			var scale = 3;
@@ -59,8 +59,8 @@
 				0,
 				(explosionImage as HTMLImageElement).width,
 				(explosionImage as HTMLImageElement).height,
-				x + tileSize / 2 - (tileSize * scale) / 2,
-				y + tileSize / 2 - (tileSize * scale) / 2,
+				xx + tileSize / 2 - (tileSize * scale) / 2,
+				yy + tileSize / 2 - (tileSize * scale) / 2,
 				tileSize * scale,
 				tileSize * scale
 			);
@@ -70,7 +70,7 @@
 			const scaleY = 0.4;
 
 			context.save();
-			context.translate(x + tileSize / 2, y + tileSize / 2);
+			context.translate(xx + tileSize / 2, yy + tileSize / 2);
 			context.rotate(calculateRotationRadians(bullet.CurrentPosition, 90));
 
 			context.drawImage(

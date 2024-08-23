@@ -69,7 +69,7 @@ public class GameMaster
 
     private static void CheckForWinner(BoardState boardState)
     {
-        var alivePlayers = boardState.Tanks.Where(player => player.Status == TankStatus.Alive).ToList();
+        var alivePlayers = boardState.Tanks.Where(player => player.Health > 0).ToList();
         if (alivePlayers.Count != 1) return;
 
         var winner = alivePlayers.First();
