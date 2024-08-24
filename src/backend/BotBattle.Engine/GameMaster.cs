@@ -19,12 +19,6 @@ public class GameMaster
                 ActiveFireCooldown = tank.WeaponSystem.ActiveFireCooldown - 1
             };
 
-        if (tank.Status == TankStatus.IsStucked)
-        {
-            boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, tank));
-            tank.Status = tank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
-        }
-
         foreach (var action in TankCalculator.CalculateNextAction(payloadHashString, tank))
         {
             switch (action)
@@ -34,14 +28,18 @@ public class GameMaster
                     break;
                 case Drive:
                     if (tank.Status == TankStatus.IsStucked)
-                        break;
-
-                    tank.Position = MoveTank(tank.Position.Direction, tank.Position, boardState);
-                    if (NavigationSystem.IsDroveIntoAnOilStain(tank.Position, boardState))
                     {
-                        tank.Status = TankStatus.IsStucked;
+                        boardState.EventLogs.Add(EventLogExtensions.CreateIsStuckedEventLog(boardState.Turns, tank));
+                        tank.Status = tank.Health > 0 ? TankStatus.Alive : TankStatus.Dead;
                     }
-
+                    else
+                    {
+                        tank.Position = MoveTank(tank.Position.Direction, tank.Position, boardState);
+                        if (NavigationSystem.IsDroveIntoAnOilStain(tank.Position, boardState))
+                        {
+                            tank.Status = TankStatus.IsStucked;
+                        }
+                    }
                     break;
                 case Shoot shoot:
                     if (!tank.WeaponSystem.CanShoot)
@@ -71,7 +69,7 @@ public class GameMaster
 
     private static void CheckForWinner(BoardState boardState)
     {
-        var alivePlayers = boardState.Tanks.Where(player => player.Status == TankStatus.Alive).ToList();
+        var alivePlayers = boardState.Tanks.Where(player => player.Health > 0).ToList();
         if (alivePlayers.Count != 1) return;
 
         var winner = alivePlayers.First();

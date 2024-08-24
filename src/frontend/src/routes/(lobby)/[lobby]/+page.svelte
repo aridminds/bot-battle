@@ -79,7 +79,7 @@
 							arenaWidth={lobby.width}
 						></TankComp>
 					{/each}
-					{#each bullets as bullet}
+					{#each bullets as bullet (bullet.Id)}
 						<BulletComp
 							{bullet}
 							{tileSize}
