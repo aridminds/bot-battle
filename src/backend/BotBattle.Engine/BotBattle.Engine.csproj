@@ -7,7 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MessagePack.Annotations" Version="2.5.172" />
         <PackageReference Include="SimplexNoise" Version="2.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BotBattle.Brain\BotBattle.Brain.csproj" />
     </ItemGroup>
 
 </Project>

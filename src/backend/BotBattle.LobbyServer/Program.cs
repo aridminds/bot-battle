@@ -1,32 +1,53 @@
 ﻿using System.Text.Json;
+using BotBattle.Engine.Models.Lobby;
 using BotBattle.LobbyServer;
+using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
-var playerNames = args[0].Split(',');
-var arenaDimensions = args[1].Split(',');
-var roundDuration = int.Parse(args[2]);
+var lobbyId = args[0];
 
-var newLobby = new Lobby(playerNames, int.Parse(arenaDimensions[0]), int.Parse(arenaDimensions[1]), roundDuration);
+var serviceCollection = new ServiceCollection();
+serviceCollection.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(new ConfigurationOptions
+{
+    EndPoints = { "localhost:6379" },
+    AbortOnConnectFail = false,
+    ConnectRetry = 5,
+}));
+
+var serviceProvider = serviceCollection.BuildServiceProvider();
+var scope = serviceProvider.CreateScope();
+
+var connectionMultiplexer = scope.ServiceProvider.GetRequiredService<IConnectionMultiplexer>();
+var database = connectionMultiplexer.GetDatabase();
+
+var lobbyKey = $"lobby:{lobbyId}";
+
+if (!database.KeyExists(lobbyKey))
+{
+    throw new Exception("Lobby does not exist");
+}
+
+var lobbyData = database.StringGet(lobbyKey);
+
+if (lobbyData.IsNullOrEmpty)
+{
+    throw new Exception("Lobby data is empty");
+}
+
+var lobbyOptions = JsonSerializer.Deserialize<LobbyOptions>(lobbyData);
+
+if (lobbyOptions == null)
+{
+    throw new Exception("Failed to deserialize lobby data");
+}
+
+var newLobby = new Lobby(lobbyOptions.Players,
+    lobbyOptions.ArenaDimension[0],
+    lobbyOptions.ArenaDimension[1],
+    lobbyOptions.RoundDuration);
 
 var cancellationTokenSource = new CancellationTokenSource();
+var subscriber = connectionMultiplexer.GetSubscriber();
 
-// _ = Task.Run(async () =>
-// {
-//     TextReader reader = new StreamReader(Console.OpenStandardInput(), Console.InputEncoding);
-//     var readTask = reader.ReadLineAsync();
-//     
-//     while (await readTask != null)
-//     {
-//         //Read from the stdin to get the command from the api
-//         var input = await readTask;
-//         readTask = reader.ReadLineAsync();
-//     }
-// }, cancellationTokenSource.Token);
-
-await newLobby.Run(state =>
-{
-    //Write to the stdout to communicate back to the api
-    Console.WriteLine(JsonSerializer.Serialize(state));
-}, cancellationTokenSource.Token);
-
-//Return the winner id
-return 0;
+await newLobby.Run((state) => { subscriber.Publish(lobbyId, JsonSerializer.Serialize(state)); },
+    cancellationTokenSource.Token);

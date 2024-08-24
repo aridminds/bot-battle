@@ -4,5 +4,6 @@ public enum TankStatus
 {
     Alive,
     Dead,
-    Winner
+    Winner,
+    IsStucked
 }

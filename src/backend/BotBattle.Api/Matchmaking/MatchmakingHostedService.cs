@@ -13,8 +13,10 @@ public class MatchmakingHostedService : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _matchmaking.QueueNewLobbies(stoppingToken);
+            //await _matchmaking.QueueNewLobbies();
             await Task.Delay(2000, CancellationToken.None);
         }
+
+        _matchmaking.Cancel();
     }
 }

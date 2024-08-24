@@ -1,5 +1,6 @@
 export enum TankStatus {
 	Alive,
 	Dead,
-	Winner
+	Winner,
+	IsStucked
 }

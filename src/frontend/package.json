@@ -34,7 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"pixi.js": "^8.3.3",
+		"bits-ui": "^0.21.13",
 		"svelte-canvas": "^1.2.0"
 	}
 }

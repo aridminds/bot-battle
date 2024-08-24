@@ -3,8 +3,8 @@
 	import { tweened } from 'svelte/motion';
 	import { quadOut as easing } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import Logo from '$lib/images/cannon_ball.svg?raw';
-	import type { Bullet } from '$lib/types/bullet';
+	import { BulletStatus, type Bullet } from '$lib/types/bullet';
+	import { calculateRotationRadians } from '$lib/types/tank';
 
 	export let bullet: Bullet;
 	export let tileSize: number;
@@ -13,11 +13,15 @@
 	export let arenaWidth: number;
 	export let arenaHeight: number;
 
-	let logo: CanvasImageSource;
+	let cannonBallImage: CanvasImageSource;
+	let explosionImage: CanvasImageSource;
 
 	onMount(() => {
-		logo = new Image();
-		logo.src = `data:image/svg+xml,${encodeURIComponent(Logo)}`;
+		cannonBallImage = new Image();
+		cannonBallImage.src = `bullet_dark_outline.png`;
+
+		explosionImage = new Image();
+		explosionImage.src = 'explosion.png';
 	});
 
 	const position = tweened(
@@ -40,12 +44,48 @@
 		const x = bullet.CurrentPosition.X * (width / arenaWidth);
 		const y = bullet.CurrentPosition.Y * (height / arenaHeight);
 		position.set([x, y]);
-		const [xx, yy] = $position;
+		let [xx, yy] = $position;
 
-		let halfTileSize = tileSize / 2;
-		let bulletSize = tileSize / 4;
+		if (bullet.Status === BulletStatus.Hit || bullet.Status === BulletStatus.SuperHit) {
+			var scale = 3;
 
-		context.drawImage(logo, x - halfTileSize, y - halfTileSize, bulletSize, bulletSize);
+			if (bullet.Status === BulletStatus.SuperHit) {
+				scale = 5;
+			}
+
+			context.drawImage(
+				explosionImage as HTMLImageElement,
+				0,
+				0,
+				(explosionImage as HTMLImageElement).width,
+				(explosionImage as HTMLImageElement).height,
+				xx + tileSize / 2 - (tileSize * scale) / 2,
+				yy + tileSize / 2 - (tileSize * scale) / 2,
+				tileSize * scale,
+				tileSize * scale
+			);
+			return;
+		} else {
+			const scaleX = 0.25;
+			const scaleY = 0.4;
+
+			context.save();
+			context.translate(xx + tileSize / 2, yy + tileSize / 2);
+			context.rotate(calculateRotationRadians(bullet.CurrentPosition, 90));
+
+			context.drawImage(
+				cannonBallImage as HTMLImageElement,
+				0,
+				0,
+				(cannonBallImage as HTMLImageElement).width,
+				(cannonBallImage as HTMLImageElement).height,
+				(-tileSize * scaleX) / 2,
+				(-tileSize * scaleY) / 2,
+				tileSize * scaleX,
+				tileSize * scaleY
+			);
+			context.restore();
+		}
 	};
 </script>
 

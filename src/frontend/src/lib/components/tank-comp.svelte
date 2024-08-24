@@ -5,7 +5,6 @@
 	import { tweened } from 'svelte/motion';
 	import { quadOut as easing } from 'svelte/easing';
 	import { onMount } from 'svelte';
-	import Logo from '$lib/images/tank_dark.svg?raw';
 	import { TankStatus } from '$lib/types/tankStatus';
 
 	export let tank: Tank;
@@ -19,7 +18,7 @@
 
 	onMount(() => {
 		logo = new Image();
-		logo.src = `data:image/svg+xml,${encodeURIComponent(Logo)}`;
+		logo.src = `tank_dark.svg`;
 	});
 
 	const position = tweened([canvasWidth / 2, canvasHeight / 2], { duration: 500, easing });
