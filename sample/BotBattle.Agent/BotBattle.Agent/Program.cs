@@ -1,27 +1,30 @@
 ﻿using System.Runtime.InteropServices;
-using System.Text.Json.Serialization;
 using Extism;
 
 namespace BotBattle.Agent;
 
-[JsonSerializable(typeof(object))]
-public partial class SourceGenerationContext : JsonSerializerContext
-{
-}
-
 public static class Program
 {
+    private static readonly Agent Agent = new();
+
     public static void Main()
     {
-        // Note: a `Main` method is required for the app to compile
+        // This method is required for compilation
     }
 
-    [UnmanagedCallersOnly]
-    public static int add()
+    [UnmanagedCallersOnly(EntryPoint = "calculate_action")]
+    public static int CalculateAction()
     {
-        var parameters = Pdk.GetInputJson(global::SourceGenerationContext.Default.Add);
-        var sum = new Sum(parameters.a + parameters.b);
-        Pdk.SetOutputJson(sum, global::SourceGenerationContext.Default.Sum);
+        var parameters = Pdk.GetInputJson(AgentJsonContext.Default.AgentRequest);
+
+        if (parameters == null)
+        {
+            Pdk.SetError("Failed to parse input JSON");
+            return 1;
+        }
+
+        var action = Agent.CalculateAction(parameters);
+        Pdk.SetOutputJson(action, AgentJsonContext.Default.AgentResponse);
         return 0;
     }
 }

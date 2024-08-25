@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BotBattle.Agent")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+727d03dd588295c058a43ad58c5a317da087faf2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9604f4b4f2f8370d3b5a28c1a3690c963b69104b")]
 [assembly: System.Reflection.AssemblyProductAttribute("BotBattle.Agent")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BotBattle.Agent")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

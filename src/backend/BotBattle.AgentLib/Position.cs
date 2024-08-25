@@ -1,6 +1,6 @@
 namespace BotBattle.AgentLib;
 
-public struct Position
+public class Position
 {
     public int X { get; set; }
 

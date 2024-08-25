@@ -12,4 +12,10 @@
       <PackageReference Include="Extism.Pdk" Version="1.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="BotBattle.AgentLib">
+        <HintPath>..\..\..\src\backend\BotBattle.AgentLib\bin\Debug\net8.0\BotBattle.AgentLib.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>
