@@ -29,6 +29,8 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexe
     EndPoints = { "localhost:6379" },
     AbortOnConnectFail = false,
     ConnectRetry = 5,
+    AsyncTimeout = 10000,
+    SyncTimeout = 10000
 }));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

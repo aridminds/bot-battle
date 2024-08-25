@@ -1,6 +1,4 @@
 ﻿using BotBattle.AgentLib;
-using BotBattle.AgentLib.Enums;
-using Action = BotBattle.AgentLib.Action;
 
 namespace BotBattle.Agent;
 

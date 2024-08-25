@@ -14,9 +14,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.Benchmark", "BotB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.Core", "BotBattle.Core\BotBattle.Core.csproj", "{58A7BE41-F0F2-469E-8B79-382049636A25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.AgentLib", "BotBattle.AgentLib\BotBattle.AgentLib.csproj", "{2F44913C-74E9-42E6-967A-F99E06A504DA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Agent", "Agent", "{AB5BF27D-5347-4C7E-AFBE-80ED553AB780}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.AgentRunner", "BotBattle.AgentRunner\BotBattle.AgentRunner.csproj", "{3DF88859-FBC7-43CF-9811-DD49EE2373D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.AgentLib", "Agent\BotBattle.AgentLib\BotBattle.AgentLib.csproj", "{799E16A7-A51F-42D3-9A05-A804DDD68725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.AgentRunner", "Agent\BotBattle.AgentRunner\BotBattle.AgentRunner.csproj", "{EA09632C-EBDB-4223-B850-D1D66DE91FE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotBattle.Agent.Default", "Agent\BotBattle.Agent.Default\BotBattle.Agent.Default.csproj", "{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,13 +56,22 @@ Global
 		{58A7BE41-F0F2-469E-8B79-382049636A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58A7BE41-F0F2-469E-8B79-382049636A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58A7BE41-F0F2-469E-8B79-382049636A25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F44913C-74E9-42E6-967A-F99E06A504DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F44913C-74E9-42E6-967A-F99E06A504DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F44913C-74E9-42E6-967A-F99E06A504DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F44913C-74E9-42E6-967A-F99E06A504DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3DF88859-FBC7-43CF-9811-DD49EE2373D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3DF88859-FBC7-43CF-9811-DD49EE2373D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3DF88859-FBC7-43CF-9811-DD49EE2373D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3DF88859-FBC7-43CF-9811-DD49EE2373D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799E16A7-A51F-42D3-9A05-A804DDD68725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799E16A7-A51F-42D3-9A05-A804DDD68725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799E16A7-A51F-42D3-9A05-A804DDD68725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799E16A7-A51F-42D3-9A05-A804DDD68725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA09632C-EBDB-4223-B850-D1D66DE91FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA09632C-EBDB-4223-B850-D1D66DE91FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA09632C-EBDB-4223-B850-D1D66DE91FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA09632C-EBDB-4223-B850-D1D66DE91FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{799E16A7-A51F-42D3-9A05-A804DDD68725} = {AB5BF27D-5347-4C7E-AFBE-80ED553AB780}
+		{EA09632C-EBDB-4223-B850-D1D66DE91FE5} = {AB5BF27D-5347-4C7E-AFBE-80ED553AB780}
+		{E3EBCD4A-2CAA-4DC2-8700-2B5785AC0FD7} = {AB5BF27D-5347-4C7E-AFBE-80ED553AB780}
 	EndGlobalSection
 EndGlobal

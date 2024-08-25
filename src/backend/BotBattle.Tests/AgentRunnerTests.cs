@@ -1,10 +1,10 @@
 using BotBattle.AgentLib;
-using BotBattle.AgentLib.Enums;
 using BotBattle.AgentRunner;
 using BotBattle.Core;
 using Bullet = BotBattle.AgentLib.Bullet;
 using Direction = BotBattle.AgentLib.Enums.Direction;
 using Obstacle = BotBattle.AgentLib.Obstacle;
+using ObstacleType = BotBattle.AgentLib.Enums.ObstacleType;
 using Position = BotBattle.AgentLib.Position;
 using Tank = BotBattle.AgentLib.Tank;
 

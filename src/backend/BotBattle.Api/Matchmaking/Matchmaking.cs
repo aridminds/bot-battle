@@ -3,6 +3,7 @@ using System.Text.Json;
 using BotBattle.Api.Models.LobbySpawner;
 using BotBattle.Api.Options;
 using BotBattle.Api.Services.LobbySpawner;
+using BotBattle.Core;
 using BotBattle.Engine.Models.Lobby;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
@@ -86,11 +87,11 @@ public class Matchmaking
 
     private void OnLobbyFinished(object? sender, Lobby lobby)
     {
-        _availablePlayers.PushRange(lobby.Players);
+        _availablePlayers.PushRange(lobby.Players.Select(p => p.Name).ToArray());
         _currentLobbies.TryRemove(lobby.LobbyId, out _);
     }
 
-    private string[] GetNewPlayerPair(int lobbySize = 2)
+    private Player[] GetNewPlayerPair(int lobbySize = 2)
     {
         var random = new Random();
 
@@ -101,6 +102,13 @@ public class Matchmaking
         var players = new string[lobbySize];
         var count = _availablePlayers.TryPopRange(players);
 
-        return count == 0 ? [] : players;
+        return count == 0
+            ? []
+            : new Player[lobbySize]
+                .Select((_, i) => new Player
+                {
+                    Name = players[i],
+                    Code = null
+                }).ToArray();
     }
 }

@@ -1,4 +1,5 @@
-﻿using BotBattle.AgentLib;
+﻿using System.Security.Cryptography;
+using BotBattle.AgentLib;
 using BotBattle.Core;
 using Extism.Sdk;
 
@@ -7,19 +8,13 @@ namespace BotBattle.AgentRunner;
 public class WasmRunner
 {
     private const string EntryPoint = "calculate_action";
-    private readonly Manifest _manifest;
     private readonly Dictionary<string, Plugin> _plugins = new();
 
     public WasmRunner(params Player[] players)
     {
-        _manifest = new Manifest(players.Select(p => new ByteArrayWasmSource(p.Code, p.Name)).ToArray<WasmSource>())
-        {
-            Timeout = TimeSpan.FromMilliseconds(1000)
-        };
-
         foreach (var player in players)
         {
-            _plugins[player.Name] = new Plugin(_manifest, [], withWasi: true);
+            _plugins[player.Name] = new Plugin(player.Code, [], withWasi: true);
         }
     }
 
@@ -27,7 +22,12 @@ public class WasmRunner
     {
         var plugin = _plugins[player];
         return plugin.Call(EntryPoint,
-            new AgentRequest { Arena = arena },
+            new AgentRequest
+            {
+                Arena = arena,
+                Hash = MD5.HashData(BitConverter.GetBytes(new Random().Next(0, 5000) * new Random().Next(0, 5000))),
+                MyTank = arena.Tanks.First(t => t.Name == player)
+            },
             AgentJsonContext.Default.AgentRequest,
             AgentJsonContext.Default.AgentResponse
         );

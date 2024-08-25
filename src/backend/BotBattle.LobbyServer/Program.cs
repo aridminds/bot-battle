@@ -41,6 +41,13 @@ if (lobbyOptions == null)
     throw new Exception("Failed to deserialize lobby data");
 }
 
+foreach (var player in lobbyOptions.Players)
+{
+    player.Code =
+        File.ReadAllBytes(
+            @"C:\Users\dmkk3r\source\repos\bot-battle\src\backend\Agent\BotBattle.Agent.Default\bin\Debug\net8.0\wasi-wasm\AppBundle\BotBattle.Agent.Default.wasm");
+}
+
 var newLobby = new Lobby(lobbyOptions.Players,
     lobbyOptions.ArenaDimension[0],
     lobbyOptions.ArenaDimension[1],

@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BotBattle.Core\BotBattle.Core.csproj" />
       <ProjectReference Include="..\BotBattle.AgentLib\BotBattle.AgentLib.csproj" />
-      <ProjectReference Include="..\BotBattle.Core\BotBattle.Core.csproj" />
     </ItemGroup>
 
 </Project>

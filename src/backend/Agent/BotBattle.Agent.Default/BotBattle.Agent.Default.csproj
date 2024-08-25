@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RuntimeIdentifier>wasi-wasm</RuntimeIdentifier>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,10 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="BotBattle.AgentLib">
-        <HintPath>..\..\..\src\backend\Agent\BotBattle.AgentLib\bin\Debug\net8.0\BotBattle.AgentLib.dll</HintPath>
-      </Reference>
+      <ProjectReference Include="..\BotBattle.AgentLib\BotBattle.AgentLib.csproj" />
     </ItemGroup>
-    
 
 </Project>
