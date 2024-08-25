@@ -1,10 +1,11 @@
 using System.Security.Cryptography;
+using BotBattle.Core;
+using BotBattle.Core.Enums;
 using BotBattle.Engine;
 using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
-using Tank = BotBattle.Engine.Models.Tank;
+using Tank = BotBattle.Core.Tank;
 
 namespace BotBattle.LobbyServer;
 
@@ -31,7 +32,7 @@ public class Lobby
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
+                Type = EnumHelper.GetRandomEnumValue(ObstacleType.Destroyed, ObstacleType.OilStain)
             });
         }
 

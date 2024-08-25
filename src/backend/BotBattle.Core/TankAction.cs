@@ -1,4 +1,4 @@
-namespace BotBattle.Brain.Models;
+namespace BotBattle.Core;
 
 public interface ITankAction
 {

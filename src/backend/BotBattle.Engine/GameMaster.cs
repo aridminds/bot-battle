@@ -1,6 +1,6 @@
-﻿using BotBattle.Brain.Models;
+﻿using BotBattle.Core;
+using BotBattle.Core.Enums;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
 
 namespace BotBattle.Engine;
@@ -40,6 +40,7 @@ public class GameMaster
                             tank.Status = TankStatus.IsStucked;
                         }
                     }
+
                     break;
                 case Shoot shoot:
                     if (!tank.WeaponSystem.CanShoot)

@@ -1,6 +1,6 @@
-﻿using BotBattle.Brain.Models;
+﻿using BotBattle.Core;
+using BotBattle.Core.Enums;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
 
 namespace BotBattle.Engine.Services;
 
@@ -91,8 +91,8 @@ public static class FireControlComputer
                     if (bullet.Status != BulletStatus.Hit && bullet.Status != BulletStatus.SuperHit) continue;
                     bullet.ShootingRange = -1;
                     var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
-                  
-                    var blastRadius =  bullet.Status == BulletStatus.SuperHit ? 5 : BlastRadius;
+
+                    var blastRadius = bullet.Status == BulletStatus.SuperHit ? 5 : BlastRadius;
                     if (!(distance < blastRadius)) continue;
                     var healthReduction = CalculateHealthReduction(distance, blastRadius);
                     DealDamage(bullet.Shooter, tank, healthReduction, HitType.BulletBlast, boardState);
@@ -102,8 +102,9 @@ public static class FireControlComputer
             foreach (var obstacle in boardState.Obstacles)
             {
                 if (!bullet.CurrentPosition.Equals(obstacle.Position)) continue;
-                if (obstacle.Type is ObstacleType.Destroyed or ObstacleType.TreeSmall or ObstacleType.TreeLeaf or ObstacleType.OilStain) continue;
-                
+                if (obstacle.Type is ObstacleType.Destroyed or ObstacleType.TreeSmall or ObstacleType.TreeLeaf
+                    or ObstacleType.OilStain) continue;
+
                 bullet.ShootingRange = -1;
                 bullet.Status = BulletStatus.Hit;
                 if (obstacle.Type == ObstacleType.Stone) continue;
@@ -132,7 +133,7 @@ public static class FireControlComputer
     {
         return (int)(FullBulletHit * (1 - distance / blastRadius));
     }
-  
+
     public static int CalculateShootingRange(int shootingPower, int gridWidth, int gridHeight,
         Position tankPosition)
     {

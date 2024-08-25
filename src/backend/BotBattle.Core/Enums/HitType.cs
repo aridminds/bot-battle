@@ -1,4 +1,4 @@
-namespace BotBattle.Engine.Services;
+namespace BotBattle.Core.Enums;
 
 public enum HitType
 {

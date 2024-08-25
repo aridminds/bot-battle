@@ -1,4 +1,4 @@
-﻿namespace BotBattle.Engine.Models.States;
+﻿namespace BotBattle.Core.Enums;
 
 public enum TankStatus
 {

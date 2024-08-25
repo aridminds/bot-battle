@@ -1,8 +1,5 @@
-﻿using MessagePack;
+﻿namespace BotBattle.Core;
 
-namespace BotBattle.Brain.Models;
-
-[MessagePackObject]
 public class Position
 {
     public Position()
@@ -16,11 +13,11 @@ public class Position
         Direction = direction;
     }
 
-    [Key(0)] public int X { get; set; }
+    public int X { get; set; }
 
-    [Key(1)] public int Y { get; set; }
+    public int Y { get; set; }
 
-    [Key(2)] public Direction Direction { get; set; }
+    public Direction Direction { get; set; }
 
     public override bool Equals(object? obj)
     {

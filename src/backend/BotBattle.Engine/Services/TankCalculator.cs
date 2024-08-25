@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using BotBattle.Brain;
-using BotBattle.Brain.Models;
+using BotBattle.Core;
+using BotBattle.Engine.Extensions;
 using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.Services;

@@ -1,4 +1,4 @@
-﻿namespace BotBattle.Engine.Models;
+﻿namespace BotBattle.Core.Enums;
 
 public enum StreetTypes
 {

@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BotBattle.Brain\BotBattle.Brain.csproj" />
+      <ProjectReference Include="..\BotBattle.Core\BotBattle.Core.csproj" />
     </ItemGroup>
 
 </Project>
