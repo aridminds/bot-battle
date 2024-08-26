@@ -31,7 +31,8 @@ public class Lobby
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
+                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain),
+                UpdateTurn = Random.Shared.Next(5, 40)
             });
         }
 

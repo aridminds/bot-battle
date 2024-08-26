@@ -89,17 +89,24 @@
 				break;
 		}
 
+		let halfTileSize = tileSize / 2;
+		context.save();
+		context.translate(x + halfTileSize, y + halfTileSize);
+		context.rotate(calculateRotationRadians(obstacle.Position));
+
 		context.drawImage(
 			htmlImageElement as HTMLImageElement,
 			0,
 			0,
 			(htmlImageElement as HTMLImageElement).width,
 			(htmlImageElement as HTMLImageElement).height,
-			x + tileSize / 2 - (tileSize * scale) / 2,
-			y + tileSize / 2 - (tileSize * scale) / 2,
+			(-tileSize * scale) / 2,
+			(-tileSize * scale) / 2,
 			tileSize * scale,
 			tileSize * scale
 		);
+
+		context.restore();
 	};
 </script>
 

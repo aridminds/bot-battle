@@ -1,7 +1,7 @@
 using BotBattle.Brain.Models;
 using BotBattle.Engine.Models;
 
-namespace BotBattle.Brain;
+namespace BotBattle.Engine;
 
 public static class TankExtensions
 {
