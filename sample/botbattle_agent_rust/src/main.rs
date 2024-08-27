@@ -47,7 +47,6 @@ pub fn calculate_action(arena: AgentRequest) -> FnResult<String> {
             let direction = Direction::convert(Direction::map_to_direction(direction));
             let action = Rotate {
                 direction,
-                hash: arena.hash,
                 id: "B8CB9292-128C-48DB-B4BC-5A7CCD4BB503".to_string(),
             };
             let response = AgentRotateResponse { action };
