@@ -13,8 +13,6 @@ pub(crate) struct AgentRotateResponse {
 pub(crate) struct Rotate {
     #[serde(rename = "Direction")]
     pub(crate) direction: i16,
-
-    pub(crate) hash: String,
     #[serde(rename = "Id")]
     pub(crate) id: String,
 }
