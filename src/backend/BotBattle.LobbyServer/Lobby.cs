@@ -1,7 +1,4 @@
 using System.Security.Cryptography;
-using BotBattle.AgentRunner;
-using BotBattle.Core;
-using BotBattle.Core.Enums;
 using BotBattle.Engine;
 using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
@@ -36,6 +33,7 @@ public class Lobby
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
                 Type = EnumHelper.GetRandomEnumValue(ObstacleType.Destroyed, ObstacleType.OilStain)
+                UpdateTurn = Random.Shared.Next(5, 40)
             });
         }
 

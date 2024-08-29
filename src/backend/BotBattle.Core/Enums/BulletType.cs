@@ -2,5 +2,7 @@ namespace BotBattle.Core.Enums;
 
 public enum BulletType
 {
-    Standard
+    Standard,
+    Missile,
+    MotherOfAllBombs
 }
