@@ -1,3 +1,5 @@
+using BotBattle.Core;
+using BotBattle.Core.Enums;
 using BotBattle.Engine.Services;
 using MessagePack;
 

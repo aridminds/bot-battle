@@ -1,14 +1,16 @@
-﻿using BotBattle.Brain.Models;
+﻿using BotBattle.Core;
+using BotBattle.Core.Enums;
+using BotBattle.Engine.Extensions;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
+
 
 namespace BotBattle.Engine.Services;
 
 public static class NavigationSystem
 {
     private const int AwayFromBorderOffset = 0;
-   
-    
+
+
     public static Position CalculateNewPosition(BoardState boardState, Position currentPosition, Direction direction)
     {
         var newPosition = CalculateNewPosition(currentPosition, direction);
@@ -16,18 +18,20 @@ public static class NavigationSystem
         possibleNewPosition.Direction = direction;
         return possibleNewPosition;
     }
-    
+
     public static bool IsPositionOccupied(Position position, BoardState boardState)
     {
         return boardState.Tanks.Any(player => player.Position.Equals(position))
-               || boardState.Obstacles.Any(obstacle => obstacle.Position.Equals(position) && obstacle.Type.IsBlockingMovement());
+               || boardState.Obstacles.Any(obstacle =>
+                   obstacle.Position.Equals(position) && obstacle.Type.IsBlockingMovement());
     }
-    
+
     public static bool IsDroveIntoAnOilStain(Position position, BoardState boardState)
     {
-        return boardState.Obstacles.Any(obstacle => obstacle.Type == ObstacleType.OilStain && obstacle.Position.Equals(position));
+        return boardState.Obstacles.Any(obstacle =>
+            obstacle.Type == ObstacleType.OilStain && obstacle.Position.Equals(position));
     }
-    
+
     private static Position CalculateNewPosition(Position currentPosition, Direction direction)
     {
         return direction switch
@@ -43,7 +47,7 @@ public static class NavigationSystem
             _ => currentPosition
         };
     }
-    
+
     private static Position ClampPositionToGrid(Position position, BoardState boardState)
     {
         position.X = Math.Clamp(position.X, AwayFromBorderOffset, boardState.Width - 1 - AwayFromBorderOffset);

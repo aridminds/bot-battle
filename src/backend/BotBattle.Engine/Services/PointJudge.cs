@@ -1,5 +1,6 @@
-﻿using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
+﻿using BotBattle.Core;
+using BotBattle.Core.Enums;
+using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.Services;
 
