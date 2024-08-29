@@ -6,6 +6,9 @@
         <Nullable>enable</Nullable>
         <RuntimeIdentifier>wasi-wasm</RuntimeIdentifier>
         <OutputType>Exe</OutputType>
+        <PublishTrimmed>true</PublishTrimmed>
+        <WasmSingleFileBundle>true</WasmSingleFileBundle>
+        <TrimMode>full</TrimMode>
     </PropertyGroup>
 
     <ItemGroup>

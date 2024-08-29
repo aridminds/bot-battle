@@ -71,7 +71,7 @@ public class Benchmarks
                 var payloadHash = MD5.HashData(BitConverter.GetBytes(data.Item1 * data.Item2));
                 var payloadHashString = BitConverter.ToString(payloadHash).Replace("-", "");
 
-                GameMaster.NextRound(payloadHashString, _boardState, _currentTank);
+                //GameMaster.NextRound(payloadHashString, _boardState, _currentTank);
             }
 
             NextPlayer();
