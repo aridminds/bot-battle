@@ -3,16 +3,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, ToBytes, FromBytes)]
 #[encoding(Json)]
-pub(crate) struct AgentRotateResponse {
+pub struct AgentRotateResponse {
     #[serde(rename = "Action")]
-    pub(crate) action: Rotate,
+    pub action: Rotate,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "$type")]
-pub(crate) struct Rotate {
+pub struct Rotate {
     #[serde(rename = "Direction")]
-    pub(crate) direction: i16,
+    pub direction: i16,
     #[serde(rename = "Id")]
-    pub(crate) id: String,
+    pub id: String,
 }

@@ -5,7 +5,9 @@ use crate::rotate_response::*;
 use crate::shoot_response::*;
 
 use extism_pdk::*;
+use crate::lib::{hex_to_i16, is_even};
 
+mod lib;
 mod direction;
 mod drive_response;
 mod rotate_response;
@@ -20,10 +22,10 @@ struct AgentRequest {
 
 #[plugin_fn]
 pub fn calculate_action(arena: AgentRequest) -> FnResult<String> {
-    let direction = first_two_bytes_as_numbers(&arena.hash, 0);
-    let shooting_range = first_two_bytes_as_numbers(&arena.hash, 2);
-    let shoot_decision = first_two_bytes_as_numbers(&arena.hash, 4);
-    let drive_decision = first_two_bytes_as_numbers(&arena.hash, 6);
+    let direction = hex_to_i16(&arena.hash, 0);
+    let shooting_range = hex_to_i16(&arena.hash, 2);
+    let shoot_decision = hex_to_i16(&arena.hash, 4);
+    let drive_decision = hex_to_i16(&arena.hash, 6);
 
     if is_even(shoot_decision) {
         //Shoot
@@ -53,13 +55,4 @@ pub fn calculate_action(arena: AgentRequest) -> FnResult<String> {
             Ok(serde_json::to_string(&response).unwrap())
         }
     }
-}
-
-fn first_two_bytes_as_numbers(input: &str, index: usize) -> i16 {
-    let bytes = input.as_bytes();
-    bytes[index] as i16 + bytes[index + 1] as i16
-}
-
-fn is_even(value: i16) -> bool {
-    value % 2 == 0
 }

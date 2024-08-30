@@ -3,18 +3,18 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, ToBytes, FromBytes)]
 #[encoding(Json)]
-pub(crate) struct AgentShootResponse {
+pub struct AgentShootResponse {
     #[serde(rename = "Action")]
-    pub(crate) action: Shoot,
+    pub action: Shoot,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "$type")]
-pub(crate) struct Shoot {
+pub struct Shoot {
     #[serde(rename = "Power")]
-    pub(crate) power: i16,
+    pub power: i16,
     #[serde(rename = "Weapon")]
-    pub(crate) weapon: String,
+    pub weapon: String,
     #[serde(rename = "Id")]
-    pub(crate) id: String,
+    pub id: String,
 }
