@@ -16,6 +16,12 @@ checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
 
 [[package]]
 name = "base64"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
+
+[[package]]
+name = "base64"
 version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
@@ -24,7 +30,9 @@ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 name = "botbattle_agent_rust"
 version = "0.1.0"
 dependencies = [
+ "base64 0.20.0",
  "extism-pdk",
+ "hex",
  "serde",
  "serde_json",
 ]
@@ -66,7 +74,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7327af9eaa0d7fe470f6bb0ee7a724045629bc4e6653afbdb066fb5aea4023f0"
 dependencies = [
  "anyhow",
- "base64",
+ "base64 0.22.1",
  "bytemuck",
  "extism-convert-macros",
  "prost",
@@ -94,7 +102,7 @@ version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23f529ac444f67ea8e6f81c36fa01c9864c30ca62cb356114fd0a071fb3bf3a4"
 dependencies = [
- "base64",
+ "base64 0.22.1",
  "serde",
  "serde_json",
 ]
@@ -106,7 +114,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0334e38735348bd085e518bfc284395fcb5c198ba65ce36f9712bd25ff9e7be0"
 dependencies = [
  "anyhow",
- "base64",
+ "base64 0.22.1",
  "extism-convert",
  "extism-manifest",
  "extism-pdk-derive",
@@ -130,6 +138,12 @@ name = "hashbrown"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+
+[[package]]
+name = "hex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "indexmap"
