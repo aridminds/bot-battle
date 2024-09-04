@@ -4,6 +4,7 @@ mod drive_response;
 mod rotate_response;
 mod shoot_response;
 
+use agent_request::Direction;
 use base64::decode;
 use hex::encode;
 
@@ -16,16 +17,16 @@ pub fn is_even(value: i16) -> bool {
     value % 2 == 0
 }
 
-pub fn map_to_direction(value: i16) -> i16 {
+pub fn map_to_direction(value: i16) -> Direction {
     match value {
-        0..=31 => 0,    //Direction::North,
-        32..=63 => 1,   //Direction::NorthEast,
-        64..=95 => 2,   //Direction::East,
-        96..=127 => 3,  //Direction::SouthEast,
-        128..=159 => 4, //Direction::South,
-        160..=191 => 5, //Direction::SouthWest,
-        192..=223 => 6, //Direction::West,
-        224..=255 => 7, //Direction::NorthWest,
+        0..=31 => Direction::North,
+        32..=63 => Direction::NorthEast,
+        64..=95 => Direction::East,
+        96..=127 => Direction::SouthEast,
+        128..=159 => Direction::South,
+        160..=191 => Direction::SouthWest,
+        192..=223 => Direction::West,
+        224..=255 => Direction::NorthWest,
         _ => panic!("Value out of range"),
     }
 }

@@ -1,3 +1,4 @@
+use crate::agent_request::Direction;
 use extism_pdk::*;
 use serde::{Deserialize, Serialize};
 
@@ -12,7 +13,7 @@ pub struct AgentRotateResponse {
 #[serde(tag = "$type")]
 pub struct Rotate {
     #[serde(rename = "Direction")]
-    pub direction: i16,
+    pub direction: Direction,
     #[serde(rename = "Id")]
     pub id: String,
 }

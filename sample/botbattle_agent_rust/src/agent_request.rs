@@ -1,4 +1,5 @@
 use extism_pdk::*;
+use serde_repr::*;
 
 #[derive(Debug, serde::Deserialize, FromBytes)]
 #[encoding(Json)]
@@ -35,15 +36,16 @@ pub struct Arena {
 #[allow(dead_code)]
 pub struct Obstacle {
     #[serde(rename = "Type")]
-    pub obstacle_type: i16,
+    pub obstacle_type: ObstacleType,
     #[serde(rename = "Position")]
     pub position: Option<Position>,
     #[serde(rename = "Direction")]
-    pub direction: i16,
+    pub direction: Direction,
 }
 
-#[derive(Debug)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[allow(dead_code)]
+#[repr(u8)]
 pub enum ObstacleType {
     Destroyed = 0,
     TreeLeaf = 1,
@@ -54,8 +56,9 @@ pub enum ObstacleType {
     OilStain = 6,
 }
 
-#[derive(Debug)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[allow(dead_code)]
+#[repr(u8)]
 pub enum Direction {
     North = 0,
     NorthEast = 1,
@@ -76,7 +79,7 @@ pub struct Bullet {
     #[serde(rename = "Position")]
     pub position: Option<Position>,
     #[serde(rename = "Direction")]
-    pub direction: i16,
+    pub direction: Direction,
 }
 
 #[derive(Debug, serde::Deserialize, FromBytes)]
@@ -102,7 +105,7 @@ pub struct Tank {
     #[serde(rename = "Position")]
     pub position: Option<Position>,
     #[serde(rename = "Direction")]
-    pub direction: i16,
+    pub direction: Direction,
 }
 
 #[derive(Debug, serde::Deserialize, FromBytes)]
