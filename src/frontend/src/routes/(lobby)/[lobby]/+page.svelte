@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Canvas, Layer, type Render } from 'svelte-canvas';
+	import { Canvas } from 'svelte-canvas';
 	import { writable } from 'svelte/store';
 	import type { BoardState } from '$lib/types/board-state';
 	import TankComp from '$lib/components/tank-comp.svelte';
@@ -7,7 +7,7 @@
 	import type { Tank } from '$lib/types/tank';
 	import type { Bullet } from '$lib/types/bullet';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import Arena from '$lib/components/arena.svelte';
 	import { getTile, type Lobby } from '$lib/types/lobby';
 	import LobbyStats from '$lib/components/lobby-stats.svelte';
@@ -15,12 +15,78 @@
 	import GroundTile from '$lib/components/ground-tile.svelte';
 	import type { Obstacle } from '$lib/types/obstacle';
 	import ObstacleComp from '$lib/components/obstacle-comp.svelte';
+	import type { ApplicationOptions } from 'pixi.js';
+	import TankAsset from '$lib/components/pixi/tank.svelte';
+	import BulletAsset from '$lib/components/pixi/bullet.svelte';
+	import Ground from '$lib/components/pixi/ground.svelte';
+	import ObstacleAsset from '$lib/components/pixi/obstacle.svelte';
+	import Assetloader from '$lib/components/pixi/assetloader.svelte';
+	import Pixi from '$lib/components/pixi/pixi.svelte';
 
-	let width: number;
-	let height: number;
 	let tanks: Tank[] = [];
 	let bullets: Bullet[] = [];
 	let obstacles: Obstacle[] = [];
+	let canvasContainer;
+
+	const options: Partial<ApplicationOptions> = {
+		backgroundColor: 'chocolate'
+	};
+	const assets: UnresolvedAsset[] = [
+		{
+			alias: 'tank',
+			src: '/tank_dark.svg'
+		},
+		{
+			alias: 'bullet',
+			src: '/bullet_dark_outline.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'ground',
+			src: '/terrainTiles_default.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'bullet-boom',
+			src: '/explosion.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'stone',
+			src: '/stone_large.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'tree',
+			src: '/treeGreen_large.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'leaf',
+			src: '/treeGreen_leaf.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'tree-small',
+			src: '/treeGreen_small.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'tree-destroyed',
+			src: '/treeBrown_twigs.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'red-barrel',
+			src: '/barrelBlack_top.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'oil-stain',
+			src: '/oilSpill_large.png',
+			data: { scaleMode: 'nearest' }
+		}
+	];
 
 	const boardState = writable<BoardState>();
 
@@ -54,42 +120,24 @@
 	<div class="grid grid-cols-3 h-full">
 		<div class="col-span-2 p-4 h-full bg-black">
 			<Arena arenaHeight={lobby.height} arenaWidth={lobby.width} let:height let:width let:tileSize>
-				<Canvas {width} {height} pixelRatio="auto" class="bg-white">
-					{#each Array(lobby.height) as _, row}
-						{#each Array(lobby.width) as _, column}
-							<GroundTile
-								{tileSize}
-								tile={getTile(lobby.mapTiles, lobby.width, column, row)}
-								{column}
-								{row}
-							></GroundTile>
-						{/each}
-					{/each}
-					{#each obstacles as obstacle}
-						<ObstacleComp {obstacle} {tileSize} arenaHeight={lobby.height} arenaWidth={lobby.width}
-						></ObstacleComp>
-					{/each}
-					{#each tanks as tank}
-						<TankComp
-							{tank}
-							{tileSize}
-							canvasHeight={height}
-							canvasWidth={width}
-							arenaHeight={lobby.height}
-							arenaWidth={lobby.width}
-						></TankComp>
-					{/each}
-					{#each bullets as bullet (bullet.Id)}
-						<BulletComp
-							{bullet}
-							{tileSize}
-							canvasHeight={height}
-							canvasWidth={width}
-							arenaHeight={lobby.height}
-							arenaWidth={lobby.width}
-						></BulletComp>
-					{/each}
-				</Canvas>
+				<canvas bind:this={canvasContainer} />
+				{#if canvasContainer !== undefined}
+					<Pixi options={{ ...options, height, width, canvas: canvasContainer }}>
+						<Assetloader bundleId="botbattle" {assets}>
+							<Ground mapTiles={lobby.mapTiles} {tileSize} tileRows={lobby.width}>
+								{#each tanks as tankInfo (tankInfo.Name)}
+									<TankAsset {tankInfo} {tileSize} />
+								{/each}
+								{#each bullets as bullet (bullet.Id)}
+									<BulletAsset {bullet} {tileSize} />
+								{/each}
+								{#each obstacles as obstacle}
+									<ObstacleAsset {tileSize} {obstacle} />
+								{/each}
+							</Ground>
+						</Assetloader>
+					</Pixi>
+				{/if}
 			</Arena>
 		</div>
 		<LobbyStats {lobby} boardState={$boardState}></LobbyStats>
