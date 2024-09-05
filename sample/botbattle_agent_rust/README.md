@@ -9,7 +9,7 @@ This library can be used to write [Extism Plug-ins](https://extism.org/docs/conc
 Generate a `lib` project with Cargo:
 
 ```bash
-cargo new --lib my-plugin
+cargo new --lib my-agent
 ```
 
 Add the library from [crates.io](https://crates.io/crates/extism-pdk).
