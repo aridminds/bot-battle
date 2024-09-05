@@ -1,5 +1,6 @@
 using System.Text.Json;
 using BotBattle.AgentLib;
+using BotBattle.AgentLib.Enums;
 using BotBattle.AgentRunner;
 using BotBattle.Core;
 using Xunit.Abstractions;
@@ -12,6 +13,7 @@ using Rotate = BotBattle.AgentLib.Rotate;
 using Drive = BotBattle.AgentLib.Drive;
 using Shoot = BotBattle.AgentLib.Shoot;
 using Tank = BotBattle.AgentLib.Tank;
+using WeaponSystem = BotBattle.AgentLib.WeaponSystem;
 
 namespace BotBattle.Tests;
 
@@ -38,7 +40,16 @@ public class WasmRunnerTests
                 Name = "player1",
                 Position = new Position { X = 1, Y = 2 },
                 Direction = Direction.North,
-                Health = 100
+                Health = 1000,
+                Name = "player1",
+                WeaponSystem = new WeaponSystem()
+                {
+                    Bullet = BulletType.Standard,
+                    Id = Guid.Empty,
+                    FireCooldown = (float)0.0,
+                    ActiveFireCooldown = (float)0.0,
+                    
+                }
             }
         };
 
@@ -75,12 +86,12 @@ public class WasmRunnerTests
             new()
             {
                 Name = "player1",
-                Code = wasmRustFile
+                PathToWasm  = @"C:\Users\Matth\source\repos\AridMinds\bot-battle\sample\botbattle_agent_rust\target\wasm32-unknown-unknown\release\botbattle_agent_rust.wasm",
+                
             }
         };
 
         var wasmRunner = new WasmRunner(players.ToArray());
-
         for (int i = 0; i < 20; i++)
         {
             var response = wasmRunner.Execute("player1", arena);
@@ -98,6 +109,5 @@ public class WasmRunnerTests
                 _output.WriteLine("Shoot - " + shoot.Power);
             }
         }
-        
     }
 }
