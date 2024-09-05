@@ -11,7 +11,7 @@ In the **Samples** folder, you'll also find example agents implemented in **Rust
 
 - **Customizable Tank Control**: Program the logic of your tank! Decide when it turns, moves, shoots, or how it reacts to its environment.
 - **Environment Interaction**: Your tank can respond to various things on the map, such as obstacles, items, or enemy tanks.
-- **WebAssembly Integration**: Use WebAssembly to run your tank's logic in a performant environment. Each tank is controlled by its own WebAssembly instance.
+- **WebAssembly Extism Integration**: Use WebAssembly to run your tank's logic in a performant environment. Each tank is controlled by its own WebAssembly instance. https://extism.org/
 - **Backend with C# and Garnet**: The backend is built with C# .NET 8 and uses Garnet to provide smooth gameplay and fast response times.
 - **Frontend with Svelte**: The game's user interface is built using Svelte, allowing for fast and efficient interactions.
 - **Sample Agents**: In the `samples` folder, you'll find example implementations of a Rust and C# agent to help you get started with developing WebAssembly-based tank control.
