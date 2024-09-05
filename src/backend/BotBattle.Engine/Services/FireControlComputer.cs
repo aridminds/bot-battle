@@ -76,22 +76,6 @@ public static class FireControlComputer
     {
         foreach (var bullet in boardState.Bullets)
         {
-            foreach (var tank in boardState.Tanks)
-            {
-                if (bullet.CurrentPosition.Equals(tank.Position))
-                {
-                    if (tank == bullet.Shooter) continue;
-                    bullet.Status = BulletStatus.Hit;
-                    DealDamage(bullet.Shooter, tank, FullBulletHit, HitType.Bullet, boardState);
-                }
-                else
-                {
-                    if (bullet.Status != BulletStatus.Hit && bullet.Status != BulletStatus.SuperHit) continue;
-                }
-
-                CalculateBlast(boardState, bullet,[tank]);
-            }
-
             foreach (var obstacle in boardState.Obstacles)
             {
                 if (!bullet.CurrentPosition.Equals(obstacle.Position)) continue;
@@ -99,7 +83,6 @@ public static class FireControlComputer
                     or ObstacleType.OilStain) continue;
                 
                 bullet.Status = obstacle.Type == ObstacleType.OilBarrel ? BulletStatus.SuperHit : BulletStatus.Hit;
-                CalculateBlast(boardState, bullet, boardState.Tanks);
 
                 if (obstacle.Type == ObstacleType.Stone) continue;
                 
@@ -111,6 +94,22 @@ public static class FireControlComputer
                 };
 
                 obstacle.UpdateTurn = boardState.Turns;
+            }
+            
+            foreach (var tank in boardState.Tanks)
+            {
+                if (bullet.CurrentPosition.Equals(tank.Position))
+                {
+                    if (tank == bullet.Shooter) continue;
+                    bullet.Status = BulletStatus.Hit;
+                    DealDamage(bullet.Shooter, tank, FullBulletHit, HitType.Bullet, boardState);
+                    CalculateBlast(boardState, bullet,boardState.Tanks.Where(t => t.Name != tank.Name).ToList());
+                }
+                else
+                {
+                    if (bullet.Status != BulletStatus.Hit && bullet.Status != BulletStatus.SuperHit) continue;
+                    CalculateBlast(boardState, bullet,[tank]);
+                }
             }
         }
     }
