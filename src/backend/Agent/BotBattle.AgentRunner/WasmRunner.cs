@@ -14,7 +14,8 @@ public class WasmRunner
     {
         foreach (var player in players)
         {
-            _plugins[player.Name] = new Plugin(player.Code, [], withWasi: true);
+            var manifest = new Manifest(new PathWasmSource(player.PathToWasm));
+            _plugins[player.Name] = new Plugin(manifest, [], withWasi: true);
         }
     }
 

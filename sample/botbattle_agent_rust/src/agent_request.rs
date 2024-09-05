@@ -117,13 +117,16 @@ pub struct WeaponSystem {
     #[serde(rename = "Bullet")]
     pub bullet: BulletType,
     #[serde(rename = "FireCooldown")]
-    pub fire_cooldown: u8,
+    pub fire_cooldown: f32,
     #[serde(rename = "ActiveFireCooldown")]
-    pub active_fire_cooldown: u8,
+    pub active_fire_cooldown: f32,
+    #[serde(rename = "CanShoot")]
+    can_shoot: bool,
 }
 
-#[derive(Debug, serde::Deserialize, FromBytes)]
-#[encoding(Json)]
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+#[allow(dead_code)]
+#[repr(u8)]
 pub enum BulletType {
     Standard = 0,
 }

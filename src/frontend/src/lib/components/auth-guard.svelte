@@ -3,5 +3,7 @@
 </script>
 
 {#if $userStore?.username}
-	<slot />
+	<slot name="authorized" />
+{:else}
+	<slot name="unauthorized" />
 {/if}
