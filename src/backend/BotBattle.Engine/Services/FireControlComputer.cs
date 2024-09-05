@@ -78,25 +78,18 @@ public static class FireControlComputer
         {
             foreach (var tank in boardState.Tanks)
             {
-                if (tank.Status == TankStatus.Dead) continue;
                 if (bullet.CurrentPosition.Equals(tank.Position))
                 {
                     if (tank == bullet.Shooter) continue;
-                    bullet.ShootingRange = -1;
                     bullet.Status = BulletStatus.Hit;
                     DealDamage(bullet.Shooter, tank, FullBulletHit, HitType.Bullet, boardState);
                 }
                 else
                 {
                     if (bullet.Status != BulletStatus.Hit && bullet.Status != BulletStatus.SuperHit) continue;
-                    bullet.ShootingRange = -1;
-                    var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
-
-                    var blastRadius = bullet.Status == BulletStatus.SuperHit ? 5 : BlastRadius;
-                    if (!(distance < blastRadius)) continue;
-                    var healthReduction = CalculateHealthReduction(distance, blastRadius);
-                    DealDamage(bullet.Shooter, tank, healthReduction, HitType.BulletBlast, boardState);
                 }
+
+                CalculateBlast(boardState, bullet,[tank]);
             }
 
             foreach (var obstacle in boardState.Obstacles)
@@ -104,12 +97,12 @@ public static class FireControlComputer
                 if (!bullet.CurrentPosition.Equals(obstacle.Position)) continue;
                 if (obstacle.Type is ObstacleType.Destroyed or ObstacleType.TreeSmall or ObstacleType.TreeLeaf
                     or ObstacleType.OilStain) continue;
+                
+                bullet.Status = obstacle.Type == ObstacleType.OilBarrel ? BulletStatus.SuperHit : BulletStatus.Hit;
+                CalculateBlast(boardState, bullet, boardState.Tanks);
 
-                bullet.ShootingRange = -1;
-                bullet.Status = BulletStatus.Hit;
                 if (obstacle.Type == ObstacleType.Stone) continue;
-                if (obstacle.Type == ObstacleType.OilBarrel) bullet.Status = BulletStatus.SuperHit;
-
+                
                 obstacle.Type = obstacle.Type switch
                 {
                     ObstacleType.TreeLarge => ObstacleType.Destroyed,
@@ -119,6 +112,20 @@ public static class FireControlComputer
 
                 obstacle.UpdateTurn = boardState.Turns;
             }
+        }
+    }
+   
+    private static void CalculateBlast(BoardState boardState,  Bullet bullet, List<Tank> tanks)
+    {
+        bullet.ShootingRange = -1;
+        foreach (var tank in tanks)
+        {
+            var distance = CalculateDistance(bullet.CurrentPosition, tank.Position);
+
+            var blastRadius = bullet.Status == BulletStatus.SuperHit ? 5 : BlastRadius;
+            if (!(distance < blastRadius)) return;
+            var healthReduction = CalculateHealthReduction(distance, blastRadius);
+            DealDamage(bullet.Shooter, tank, healthReduction, HitType.BulletBlast, boardState);
         }
     }
 
