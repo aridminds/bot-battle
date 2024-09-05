@@ -25,7 +25,7 @@ The frontend is built with **Svelte**. To run it locally, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/bot-battle.git
+    git clone https://github.com/aridminds/bot-battle.git
     cd bot-battle/frontend
     ```
 
