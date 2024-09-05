@@ -12,6 +12,7 @@ using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -138,6 +139,32 @@ apiGroup.MapPost("/account/logout", (HttpContext httpContext) =>
 
     return Results.Ok();
 }).RequireAuthorization();
+
+apiGroup.MapPost("/account/wasm", async (IFormFile wasmFile, HttpContext httpContext,
+    IOptions<MatchmakingOptions> matchmakingOptions,
+    UsersDbContext usersDbContext) =>
+{
+    if (httpContext.User.Identity is { IsAuthenticated: false })
+    {
+        return Results.Unauthorized();
+    }
+
+    var user = usersDbContext.Users.FirstOrDefault(u => u.Username == httpContext.User.Identity!.Name);
+
+    if (user == null)
+        return Results.NotFound();
+
+    await using var fileStream = wasmFile.OpenReadStream();
+    using var memoryStream = new MemoryStream();
+    fileStream.CopyTo(memoryStream);
+
+    await using var file = File.Create(Path.Combine(matchmakingOptions.Value.PathToUserWasm, user.Id + ".wasm"));
+    memoryStream.Seek(0, SeekOrigin.Begin);
+    memoryStream.CopyTo(file);
+
+    return Results.Ok();
+}).RequireAuthorization().DisableAntiforgery();
+
 
 apiGroup.MapGet("/account/me", (HttpContext httpContext, UsersDbContext usersDbContext) =>
 {
