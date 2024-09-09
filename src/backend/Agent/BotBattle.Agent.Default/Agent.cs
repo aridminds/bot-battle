@@ -34,6 +34,9 @@ public class Agent : IAgent
 
         _actions.Push(new Drive());
 
+        if(myTank.Inventory.Count > 0)
+            _actions.Push(new UseItem { ItemType = myTank.Inventory.First() });
+        
         var rotateAction = new Rotate
         {
             Direction = MapToDirection(int.Parse(direction, NumberStyles.HexNumber))

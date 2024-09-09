@@ -8,13 +8,21 @@ public static class StartPositionService
 {
     private const int MinDistanceBetweenPlayers = 2;
 
-    public static Position SetStartPosition(BoardState boardState)
+    public static Position? SetStartPosition(BoardState boardState)
     {
         var random = new Random();
+        var maxAttempts = 50;
+        var attempts = 0;
+        
         Position newPosition;
         do
         {
-            newPosition = new Position(random.Next(0, boardState.Width),
+            if (attempts >= maxAttempts)
+            {
+                return null;
+            }
+            attempts++;
+            newPosition = new Position(random.Next(0, boardState.Width), 
                 random.Next(0, boardState.Height), EnumHelper.GetRandomEnumValue<Direction>());
         } while (!IsPositionValid(newPosition, boardState));
 
