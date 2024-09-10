@@ -103,8 +103,9 @@
 	<div class="flex flex-row justify-between mb-8">
 		<h1 class="text-2xl">bot-battle <span class="text-sm">v0.0.1</span></h1>
 		{#if $userStore?.username}
-			<div class="flex flex-row items-center">
+			<div class="flex flex-row items-center gap-2">
 				<p class="mr-4">Logged in as {$userStore.username}</p>
+				<a href="/account" class="rounded-md border border-zinc-900 px-2 py-1">Account</a>
 				<button class="rounded-md border border-zinc-900 px-2 py-1" on:click={logout}>Logout</button
 				>
 			</div>

@@ -1,4 +1,5 @@
-﻿using BotBattle.Engine.Models;
+﻿using BotBattle.Core.Enums;
+using BotBattle.Engine.Models;
 
 namespace BotBattle.Engine.MapGenerator.Services;
 

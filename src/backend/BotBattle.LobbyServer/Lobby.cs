@@ -1,25 +1,29 @@
 using System.Security.Cryptography;
+using BotBattle.AgentRunner;
+using BotBattle.Core;
+using BotBattle.Core.Enums;
 using BotBattle.Engine;
 using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
 using BotBattle.Engine.Services;
-using Tank = BotBattle.Engine.Models.Tank;
+using Tank = BotBattle.Core.Tank;
 
 namespace BotBattle.LobbyServer;
 
 public class Lobby
 {
     private readonly GameMaster _gameMaster = new();
+    private readonly WasmRunner _wasmRunner;
     private Tank _currentTank;
     private int _roundDuration;
+    private BoardState BoardState { get; set; }
 
-    public Lobby(string[] playerNames, int arenaWidth, int arenaHeight, int roundDuration)
+    public Lobby(Player[] players, int arenaWidth, int arenaHeight, int roundDuration)
     {
         BoardState = new BoardState(arenaWidth, arenaHeight);
 
-        foreach (var playerName in playerNames)
-            BoardState.Tanks.Add(new Tank { Name = playerName, WeaponSystem = new WeaponSystem { FireCooldown = 2 } });
+        foreach (var player in players)
+            BoardState.Tanks.Add(new Tank { Name = player.Name, WeaponSystem = new WeaponSystem { FireCooldown = 2 } });
 
         foreach (var tank in BoardState.Tanks)
         {
@@ -31,15 +35,15 @@ public class Lobby
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
+                Type = EnumHelper.GetRandomEnumValue(ObstacleType.Destroyed, ObstacleType.OilStain),
+                UpdateTurn = Random.Shared.Next(5, 40)
             });
         }
 
         _currentTank = BoardState.Tanks.First();
         _roundDuration = roundDuration;
+        _wasmRunner = new WasmRunner(players);
     }
-
-    private BoardState BoardState { get; set; }
 
     public async Task Run(Action<BoardState> onNewBoardState, CancellationToken ct)
     {
@@ -49,11 +53,10 @@ public class Lobby
 
             if (_currentTank.Status != TankStatus.Dead)
             {
-                var data = await CallDataSource();
-                var payloadHash = MD5.HashData(BitConverter.GetBytes(data.Item1 * data.Item2));
-                var payloadHashString = BitConverter.ToString(payloadHash).Replace("-", "");
+                GameMaster.NextRound(BoardState, _currentTank, _wasmRunner);
 
-                GameMaster.NextRound(payloadHashString, BoardState, _currentTank);
+                await Task.Delay(200, ct);
+
                 onNewBoardState?.Invoke(BoardState);
             }
 
@@ -67,11 +70,5 @@ public class Lobby
 
         var nextPlayerIndex = (currentPlayerIndex + 1) % BoardState.Tanks.Count;
         _currentTank = BoardState.Tanks[nextPlayerIndex];
-    }
-
-    private async Task<(long, long)> CallDataSource()
-    {
-        await Task.Delay(_roundDuration);
-        return (new Random().Next(0, 5000), new Random().Next(0, 5000));
     }
 }

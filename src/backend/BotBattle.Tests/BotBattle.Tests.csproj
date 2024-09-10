@@ -21,7 +21,20 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Agent\BotBattle.Agent.Default\BotBattle.Agent.Default.csproj" />
+        <ProjectReference Include="..\Agent\BotBattle.AgentLib\BotBattle.AgentLib.csproj" />
+        <ProjectReference Include="..\Agent\BotBattle.AgentRunner\BotBattle.AgentRunner.csproj" />
         <ProjectReference Include="..\BotBattle.Engine\BotBattle.Engine.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Resources\BotBattle.Agent.wasm">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

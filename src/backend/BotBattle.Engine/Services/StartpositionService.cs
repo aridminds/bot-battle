@@ -1,4 +1,4 @@
-﻿using BotBattle.Brain.Models;
+﻿using BotBattle.Core;
 using BotBattle.Engine.Helper;
 using BotBattle.Engine.Models;
 

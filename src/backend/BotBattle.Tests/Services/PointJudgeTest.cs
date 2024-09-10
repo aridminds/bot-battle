@@ -1,5 +1,6 @@
-﻿using BotBattle.Engine.Models;
-using BotBattle.Engine.Models.States;
+﻿using BotBattle.Core;
+using BotBattle.Core.Enums;
+using BotBattle.Engine.Models;
 using BotBattle.Engine.Services;
 
 namespace BotBattle.Tests.Services;
@@ -7,8 +8,8 @@ namespace BotBattle.Tests.Services;
 public class PointJudgeTest
 {
     private readonly BoardState boardState = new BoardState(10, 10);
-    
-    
+
+
     [Fact]
     public void CalculatePoints_FullHit()
     {
@@ -18,7 +19,7 @@ public class PointJudgeTest
             PointRegister = 0,
             Name = "TestTank"
         };
-        
+
         boardState.Tanks.Add(tank);
 
         PointJudge.CalculatePoints(tank, 30, false, false, boardState);
@@ -79,7 +80,7 @@ public class PointJudgeTest
             PointRegister = 0,
             Name = "TestTank1"
         };
-        
+
         var tank2 = new Tank
         {
             Health = 100,
@@ -87,9 +88,8 @@ public class PointJudgeTest
             Name = "TestTank2",
             Status = TankStatus.Dead,
             DiedInTurn = 0
-            
         };
-        
+
         var tank3 = new Tank
         {
             Health = 100,
@@ -97,13 +97,12 @@ public class PointJudgeTest
             Name = "TestTank3",
             Status = TankStatus.Dead,
             DiedInTurn = 1
-            
         };
         boardState.Turns = 3;
         boardState.Tanks.Add(tank1);
         boardState.Tanks.Add(tank2);
         boardState.Tanks.Add(tank3);
-        
+
         PointJudge.CalculatePoints(tank1, 30, false, true, boardState);
         Assert.Equal(38, tank1.PointRegister);
     }
@@ -122,7 +121,7 @@ public class PointJudgeTest
         PointJudge.CalculatePoints(tank, 30, true, true, boardState);
         Assert.Equal(2, tank.PointRegister);
     }
-    
+
     [Fact]
     public void CalculatePoints_SelfKill_ToZero()
     {
