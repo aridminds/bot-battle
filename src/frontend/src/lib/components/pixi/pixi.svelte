@@ -15,6 +15,8 @@
 	import { Application, type ApplicationOptions } from 'pixi.js';
 
 	export let options: Partial<ApplicationOptions>;
+	export let dynWidth: number;
+	export let dynHeight: number;
 
 	const app = new Application();
 	setContext('pixi/stage', () => app.stage);
@@ -24,10 +26,16 @@
 		await app.init(options);
 		app.stage.sortableChildren = true;
 	}
+
+	const initProm = initState();
+
+	$: initProm.then(() => {
+		app.renderer.resize(dynWidth, dynHeight);
+	});
 </script>
 
 <div class="hidden">
-	{#await initState()}
+	{#await initProm}
 		<slot name="loading" />
 	{:then}
 		<slot />

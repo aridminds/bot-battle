@@ -1,20 +1,15 @@
 <script lang="ts">
-	import { Canvas } from 'svelte-canvas';
 	import { writable } from 'svelte/store';
 	import type { BoardState } from '$lib/types/board-state';
-	import TankComp from '$lib/components/tank-comp.svelte';
-	import BulletComp from '$lib/components/bullet-comp.svelte';
 	import type { Tank } from '$lib/types/tank';
 	import type { Bullet } from '$lib/types/bullet';
 	import { page } from '$app/stores';
 	import { onDestroy } from 'svelte';
 	import Arena from '$lib/components/arena.svelte';
-	import { getTile, type Lobby } from '$lib/types/lobby';
+	import { type Lobby } from '$lib/types/lobby';
 	import LobbyStats from '$lib/components/lobby-stats.svelte';
 	import { getApiPath } from '$lib/base-path';
-	import GroundTile from '$lib/components/ground-tile.svelte';
 	import type { Obstacle } from '$lib/types/obstacle';
-	import ObstacleComp from '$lib/components/obstacle-comp.svelte';
 	import type { ApplicationOptions, UnresolvedAsset } from 'pixi.js';
 	import TankAsset from '$lib/components/pixi/tank.svelte';
 	import BulletAsset from '$lib/components/pixi/bullet.svelte';
@@ -122,7 +117,11 @@
 			<Arena arenaHeight={lobby.height} arenaWidth={lobby.width} let:height let:width let:tileSize>
 				<canvas bind:this={canvasContainer} />
 				{#if canvasContainer !== undefined}
-					<Pixi options={{ ...options, height, width, canvas: canvasContainer }}>
+					<Pixi
+						options={{ ...options, height, width, canvas: canvasContainer }}
+						dynHeight={height}
+						dynWidth={width}
+					>
 						<Assetloader bundleId="botbattle" {assets}>
 							<Ground mapTiles={lobby.mapTiles} {tileSize} tileRows={lobby.width}>
 								{#each tanks as tankInfo (tankInfo.Name)}

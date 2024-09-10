@@ -26,21 +26,6 @@
 	const sprites: Sprite[] = [];
 
 	const layer = getOrCreateLayer(0);
-	mapTiles.forEach((e, i) => {
-		const x = i % tileRows;
-		const y = Math.floor(i / tileRows);
-
-		const sprite = new Sprite();
-		sprite.width = tileSize;
-		sprite.height = tileSize;
-		sprite.x = x * tileSize;
-		sprite.y = y * tileSize;
-
-		sprites.push(sprite);
-		layer.addChild(sprite);
-	});
-
-	loadProm.then(() => sprites.forEach((s, i) => (s.texture = sheet.textures[mapTiles[i] - 1])));
 
 	function GenerateSheetData() {
 		const data: SpritesheetData = { meta: { scale: 1 }, frames: {} };
@@ -64,6 +49,30 @@
 		});
 		sprites.length = 0;
 	});
+
+	$: {
+		sprites.forEach((s) => {
+			s.removeFromParent();
+			s.destroy();
+		});
+		sprites.length = 0;
+
+		mapTiles.forEach((e, i) => {
+			const x = i % tileRows;
+			const y = Math.floor(i / tileRows);
+
+			const sprite = new Sprite();
+			sprite.width = tileSize;
+			sprite.height = tileSize;
+			sprite.x = x * tileSize;
+			sprite.y = y * tileSize;
+
+			sprites.push(sprite);
+			layer.addChild(sprite);
+		});
+
+		loadProm.then(() => sprites.forEach((s, i) => (s.texture = sheet.textures[mapTiles[i] - 1])));
+	}
 </script>
 
 <div>
