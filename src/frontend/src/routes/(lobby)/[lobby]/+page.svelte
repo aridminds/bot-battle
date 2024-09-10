@@ -15,7 +15,7 @@
 	import GroundTile from '$lib/components/ground-tile.svelte';
 	import type { Obstacle } from '$lib/types/obstacle';
 	import ObstacleComp from '$lib/components/obstacle-comp.svelte';
-	import type { ApplicationOptions } from 'pixi.js';
+	import type { ApplicationOptions, UnresolvedAsset } from 'pixi.js';
 	import TankAsset from '$lib/components/pixi/tank.svelte';
 	import BulletAsset from '$lib/components/pixi/bullet.svelte';
 	import Ground from '$lib/components/pixi/ground.svelte';
@@ -126,10 +126,10 @@
 						<Assetloader bundleId="botbattle" {assets}>
 							<Ground mapTiles={lobby.mapTiles} {tileSize} tileRows={lobby.width}>
 								{#each tanks as tankInfo (tankInfo.Name)}
-									<TankAsset {tankInfo} {tileSize} />
+									<TankAsset {tankInfo} {tileSize} roundDuration={1000} />
 								{/each}
 								{#each bullets as bullet (bullet.Id)}
-									<BulletAsset {bullet} {tileSize} />
+									<BulletAsset {bullet} {tileSize} roundDuration={1000} />
 								{/each}
 								{#each obstacles as obstacle}
 									<ObstacleAsset {tileSize} {obstacle} />

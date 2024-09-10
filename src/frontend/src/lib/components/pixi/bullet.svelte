@@ -11,24 +11,29 @@
 
 	export let bullet: Bullet;
 	export let tileSize: number;
+	export let roundDuration: number;
 
 	let lastState: BulletStatus | null = null;
+	let bulletExploded = false;
 
 	const sprite = new Sprite(Assets.get(assetId));
 	sprite.anchor.set(0.5);
 	sprite.scale = 0.8;
-	sprite.angle = calculateRotationDegrees(bullet.CurrentPosition, rotationOffset);
-	sprite.x = bullet.CurrentPosition.X * tileSize + tileSize / 2;
-	sprite.y = bullet.CurrentPosition.Y * tileSize + tileSize / 2;
+	sprite.angle = calculateRotationDegrees(bullet.CurrentPosition.Direction, rotationOffset);
+	sprite.x = bullet.Shooter.Position.X * tileSize + tileSize / 2;
+	sprite.y = bullet.Shooter.Position.Y * tileSize + tileSize / 2;
 
 	getOrCreateLayer(10).addChild(sprite);
 
-	const moveDuration = 1000;
+	const moveDuration = roundDuration;
 	let targetPosition = {
 		X: bullet.CurrentPosition.X * tileSize + tileSize / 2,
 		Y: bullet.CurrentPosition.Y * tileSize + tileSize / 2
 	};
-	let startPosition = targetPosition;
+	let startPosition = {
+		X: sprite.x,
+		Y: sprite.y
+	};
 	let moveTime = 0;
 
 	const ticker = getTicker();
@@ -44,6 +49,19 @@
 			const factor = linear(Math.min(moveTime, moveDuration) / moveDuration);
 			sprite.x = startPosition.X + (targetPosition.X - startPosition.X) * factor;
 			sprite.y = startPosition.Y + (targetPosition.Y - startPosition.Y) * factor;
+
+			return;
+		}
+
+		if (
+			!bulletExploded &&
+			(bullet.Status == BulletStatus.Hit || bullet.Status == BulletStatus.SuperHit)
+		) {
+			bulletExploded = true;
+			const sizeFactor = bullet.Status == BulletStatus.Hit ? 3 : 5;
+			sprite.width = sprite.height = sizeFactor * tileSize;
+			sprite.texture = Assets.get(boomAssetId);
+			sprite.angle = Math.floor(Math.random() * 360);
 		}
 	}
 
@@ -59,31 +77,20 @@
 			Y: bullet.CurrentPosition.Y * tileSize + tileSize / 2
 		};
 		switch (bullet.Status) {
-			case BulletStatus.ShotStart:
-			case BulletStatus.InFlight:
+			case BulletStatus.ShotStart: {
 				if (newPosition.X != targetPosition.X || newPosition.Y != targetPosition.Y) {
 					moveTime = 0;
 					startPosition = { X: sprite.x, Y: sprite.y };
 					targetPosition = newPosition;
 				}
+
+				break;
+			}
+			case BulletStatus.InFlight:
 				break;
 			case BulletStatus.Hit:
-				if (lastState !== BulletStatus.Hit) {
-					sprite.width = sprite.height = 3 * tileSize;
-					sprite.texture = Assets.get(boomAssetId);
-					sprite.angle = Math.floor(Math.random() * 360);
-				}
-				sprite.x = newPosition.X;
-				sprite.y = newPosition.Y;
 				break;
 			case BulletStatus.SuperHit:
-				if (lastState !== BulletStatus.Hit) {
-					sprite.width = sprite.height = 5 * tileSize;
-					sprite.texture = Assets.get(boomAssetId);
-					sprite.angle = Math.floor(Math.random() * 360);
-				}
-				sprite.x = newPosition.X;
-				sprite.y = newPosition.Y;
 				break;
 		}
 		lastState = bullet.Status;

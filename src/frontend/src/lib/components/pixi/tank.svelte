@@ -9,11 +9,13 @@
 	const assetId = 'tank';
 	const rotationOffset = -90;
 
-	export let tankInfo: Tank;
+	export let roundDuration: number;
 	export let tileSize: number;
+	export let tankInfo: Tank;
 
-	let lastState: TankStatus | null = null;
+	let lastTankInfo: Tank | null = null;
 
+	const animationState = ['tank', tankInfo.Name];
 	const tankContainer = new Container({ label: 'tank-container' });
 	const sprite = new Sprite(Assets.get(assetId));
 	sprite.anchor.set(0.5);
@@ -27,7 +29,8 @@
 			align: 'center'
 		}),
 		y: -10 - sprite.height / 2,
-		anchor: { x: 0.5, y: 1 }
+		anchor: { x: 0.5, y: 1 },
+		text: `${tankInfo.Health}\n${tankInfo.Name}`
 	});
 	tankContainer.position = {
 		x: tankInfo.Position.X * tileSize + tileSize / 2,
@@ -37,12 +40,14 @@
 	tankContainer.addChild(sprite, label);
 	getOrCreateLayer(5).addChild(tankContainer);
 
-	const rotationDuration = 500;
-	let targetRotation = calculateRotationDegrees(tankInfo.Position, rotationOffset);
-	let startRotation = targetRotation;
+	let totalRoundTime = 0;
+	const rotationDuration = roundDuration / 3;
+	let distanceRotation = 0;
+	let startRotation = calculateRotationDegrees(tankInfo.Position.Direction, rotationOffset);
+	let targetRotation = startRotation;
 	let rotationTime = 0;
 
-	const moveDuration = 500;
+	const moveDuration = roundDuration / 3;
 	let targetPosition = {
 		X: tankInfo.Position.X * tileSize + tileSize / 2,
 		Y: tankInfo.Position.Y * tileSize + tileSize / 2
@@ -51,17 +56,21 @@
 	let moveTime = 0;
 
 	const ticker = getTicker();
-	ticker.add(animate, ['tank', tankInfo.Name]);
+	ticker.add(animate, animationState);
 
 	function animate(ticker: Ticker) {
-		if (targetRotation !== sprite.angle && rotationTime < rotationDuration) {
+		totalRoundTime += ticker.deltaMS;
+		if (totalRoundTime > roundDuration) totalRoundTime -= roundDuration;
+		if (distanceRotation != 0 && rotationTime < rotationDuration) {
 			rotationTime += ticker.deltaMS;
 			sprite.angle =
-				startRotation +
-				(targetRotation - startRotation) *
-					backOut(Math.min(rotationTime, rotationDuration) / rotationDuration);
+				(startRotation +
+					distanceRotation * backOut(Math.min(rotationTime, rotationDuration) / rotationDuration)) %
+				360;
 			return;
 		}
+
+		if (totalRoundTime < rotationDuration) return;
 
 		if (
 			(targetPosition.X !== tankContainer.x || targetPosition.Y !== tankContainer.y) &&
@@ -75,48 +84,66 @@
 	}
 
 	onDestroy(() => {
+		ticker.remove(animate, animationState);
 		tankContainer.removeFromParent();
 		tankContainer.destroy();
-		ticker.remove(animate, ['tank', tankInfo.Name]);
 	});
 
 	$: {
-		label.text = `${tankInfo.Health}\n${tankInfo.Name}`;
-		const newPosition = {
-			X: tankInfo.Position.X * tileSize + tileSize / 2,
-			Y: tankInfo.Position.Y * tileSize + tileSize / 2
-		};
-		if (newPosition.X != targetPosition.X || newPosition.Y != targetPosition.Y) {
-			moveTime = 0;
-			startPosition = { X: tankContainer.x, Y: tankContainer.y };
-			targetPosition = newPosition;
+		if (lastTankInfo?.Name != tankInfo.Name || lastTankInfo?.Health != tankInfo.Health)
+			label.text = `${tankInfo.Health}\n${tankInfo.Name}`;
+
+		if (
+			lastTankInfo?.Position.X != tankInfo.Position.X ||
+			lastTankInfo?.Position.Y != tankInfo.Position.Y
+		) {
+			const newPosition = {
+				X: tankInfo.Position.X * tileSize + tileSize / 2,
+				Y: tankInfo.Position.Y * tileSize + tileSize / 2
+			};
+			if (newPosition.X != targetPosition.X || newPosition.Y != targetPosition.Y) {
+				moveTime = 0;
+				startPosition = { X: tankContainer.x, Y: tankContainer.y };
+				targetPosition = newPosition;
+			}
 		}
 
-		const newRotation = calculateRotationDegrees(tankInfo.Position, rotationOffset);
-		if (newRotation != targetRotation) {
-			rotationTime = 0;
-			startRotation = sprite.angle;
-			targetRotation = newRotation;
+		if (lastTankInfo?.Position.Direction != tankInfo.Position.Direction) {
+			const newRotation = calculateRotationDegrees(tankInfo.Position.Direction, rotationOffset);
+			if (newRotation != targetRotation) {
+				startRotation = sprite.angle;
+				targetRotation = newRotation;
+				const l = targetRotation - startRotation;
+				const r = l - 360;
+				distanceRotation = Math.abs(l) < Math.abs(r) ? l : r;
+				rotationTime = 0;
+			}
 		}
-		switch (tankInfo.Status) {
-			case TankStatus.Dead:
-				label.style.fill = 'red';
-				break;
-			case TankStatus.Winner:
-				label.style.fill = 'green';
-				break;
-			case TankStatus.IsStucked:
-				if (lastState === TankStatus.IsStucked) {
-					rotationTime = 0;
-					startRotation = sprite.angle;
-					targetRotation = 360 + sprite.angle;
-				}
-			case TankStatus.Alive:
-			default:
-				label.style.fill = 'black'; // Standardfarbe
-				break;
+
+		if (lastTankInfo?.Status != tankInfo.Status) {
+			switch (tankInfo.Status) {
+				case TankStatus.Dead:
+					label.style.fill = 'red';
+					break;
+				case TankStatus.Winner:
+					label.style.fill = 'green';
+					break;
+				case TankStatus.IsStucked:
+					break;
+				case TankStatus.Alive:
+					if (lastTankInfo?.Status == TankStatus.IsStucked) {
+						startRotation = sprite.angle;
+						const l = targetRotation - startRotation;
+						const r = l - 360;
+						distanceRotation = 360 + (Math.abs(l) < Math.abs(r) ? l : r);
+						rotationTime = 0;
+					}
+					break;
+				default:
+					break;
+			}
 		}
-		lastState = tankInfo.Status;
+		lastTankInfo = tankInfo;
 	}
 </script>
 

@@ -11,10 +11,10 @@ export type Tank = {
 	DiedInTurn: number;
 };
 
-export function calculateRotationDegrees(position: Position, offset: number = 0): number {
+export function calculateRotationDegrees(direction: Direction, offset: number = 0): number {
 	let rotation: number = offset;
 
-	switch (position.Direction) {
+	switch (direction) {
 		default:
 		case Direction.North:
 			rotation += 270;
@@ -45,6 +45,6 @@ export function calculateRotationDegrees(position: Position, offset: number = 0)
 	return rotation;
 }
 
-export function calculateRotationRadians(position: Position, offsetDegree: number = 0): number {
-	return (calculateRotationDegrees(position, offsetDegree) * Math.PI) / 180;
+export function calculateRotationRadians(direction: Direction, offsetDegree: number = 0): number {
+	return (calculateRotationDegrees(direction, offsetDegree) * Math.PI) / 180;
 }
