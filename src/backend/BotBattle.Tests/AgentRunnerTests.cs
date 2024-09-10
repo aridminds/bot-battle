@@ -29,11 +29,7 @@ public class WasmRunnerTests
     [Fact]
     public void TestRun()
     {
-        var wasmFile = File.ReadAllBytes(@"C:\Users\matthiasr\source\repos\aridminds\bot-battle\src\backend\Agent\BotBattle.Agent.Default\bin\Debug\net8.0\wasi-wasm\AppBundle\BotBattle.Agent.Default.wasm");
-        var wasmRustFile =
-            File.ReadAllBytes(
-                @"C:\Users\matthiasr\source\repos\aridminds\bot-battle\sample\botbattle_agent_rust\target\wasm32-unknown-unknown\debug\botbattle_agent_rust.wasm");
-        var tanks = new List<Tank>
+       var tanks = new List<Tank>
         {
             new Tank
             {
@@ -41,7 +37,6 @@ public class WasmRunnerTests
                 Position = new Position { X = 1, Y = 2 },
                 Direction = Direction.North,
                 Health = 1000,
-                Name = "player1",
                 WeaponSystem = new WeaponSystem()
                 {
                     Bullet = BulletType.Standard,
@@ -86,8 +81,8 @@ public class WasmRunnerTests
             new()
             {
                 Name = "player1",
-                PathToWasm  = @"C:\Users\Matth\source\repos\AridMinds\bot-battle\sample\botbattle_agent_rust\target\wasm32-unknown-unknown\release\botbattle_agent_rust.wasm",
-                
+                //PathToWasm  = @"C:\Users\Matth\source\repos\AridMinds\bot-battle\sample\botbattle_agent_rust\target\wasm32-unknown-unknown\release\botbattle_agent_rust.wasm",
+                PathToWasm = @"C:\Users\Matth\source\repos\AridMinds\bot-battle\src\backend\Agent\BotBattle.Agent.Default\bin\Debug\net8.0\wasi-wasm\AppBundle\BotBattle.Agent.Default.wasm"
             }
         };
 

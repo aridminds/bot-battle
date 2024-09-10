@@ -11,13 +11,13 @@ public static class AirTrafficController
         boardState.Airplane.IsFlying = true;
         boardState.Airplane.DroppingGiftPosition = droppingGiftPosition;
         boardState.Airplane.DroppingGiftType = droppingGiftType;
-        boardState.Airplane.Position = new Position(0, droppingGiftPosition.Y, Direction.East);
+        boardState.Airplane.Position = new Position(-1, droppingGiftPosition.Y, Direction.East);
         boardState.EventLogs.Add(EventLogExtensions.CreatePlainHasStartedEventLog(boardState.Turns));
     }
     
     public static void MoveAirplane(BoardState boardState)
     {
-        if (boardState.Airplane.ParachuteStatus == ParachuteStatus.Delivered)
+        if (boardState.Airplane is { ParachuteStatus: ParachuteStatus.Delivered, IsFlying: false })
         {
             var collectibleItem = Giftor.GetPossibleGiftType(boardState);
             if (collectibleItem == null) return;
@@ -51,18 +51,17 @@ public static class AirTrafficController
                 break;
         }
         
-        if (boardState.Airplane.Position.Equals(boardState.Airplane.DroppingGiftPosition))
-        {
-            boardState.Airplane.ParachuteStatus = ParachuteStatus.InAirHigh;
-        }
-        
         if(boardState.Airplane.Position.X > boardState.Width)
         {
             boardState.Airplane.IsFlying = false;
         }
         else
         {
-            boardState.Airplane.Position = new Position(boardState.Airplane.Position.X + 1, boardState.Airplane.Position.Y, Direction.East);
+            boardState.Airplane.Position.X += 1;
+            if (boardState.Airplane.Position.Equals(boardState.Airplane.DroppingGiftPosition))
+            {
+                boardState.Airplane.ParachuteStatus = ParachuteStatus.InAirHigh;
+            }
         }
     }
 }
