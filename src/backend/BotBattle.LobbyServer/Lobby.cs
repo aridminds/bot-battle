@@ -26,12 +26,12 @@ public class Lobby
             tank.Position = StartPositionService.SetStartPosition(BoardState);
         }
 
-        for (var i = 0; i < (arenaWidth * arenaHeight * 0.75d); i++)
+        for (var i = 0; i < (arenaWidth * arenaHeight * 0.05d); i++)
         {
             BoardState.Obstacles.Add(new Obstacle
             {
                 Position = StartPositionService.SetStartPosition(BoardState),
-                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.Stone, ObstacleType.OilBarrel, ObstacleType.TreeLarge, ObstacleType.TreeLeaf, ObstacleType.TreeSmall)
+                Type = EnumHelper.GetRandomEnumValue<ObstacleType>(ObstacleType.Destroyed, ObstacleType.OilStain)
             });
         }
 
