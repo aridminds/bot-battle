@@ -4,8 +4,11 @@
 	import { onMount } from 'svelte';
 	import { Canvas } from 'svelte-canvas';
 	import Arena from './arena.svelte';
-	import GroundTile from './ground-tile.svelte';
 	import { Label } from 'bits-ui';
+	import Ground from './pixi/ground.svelte';
+	import Pixi from './pixi/pixi.svelte';
+	import Assetloader from './pixi/assetloader.svelte';
+	import type { ApplicationOptions, UnresolvedAsset } from 'pixi.js';
 
 	let lobbySize: number = 10;
 	let roundDuration: number = 200;
@@ -14,7 +17,18 @@
 	let arenaWidthTemp: number = arenaWidth;
 	let arenaHeightTemp: number = arenaHeight;
 	let mapTiles: number[] = [];
-	let canvas: Canvas;
+	let canvasContainer;
+
+	const options: Partial<ApplicationOptions> = {
+		backgroundColor: 'white'
+	};
+	const assets: UnresolvedAsset[] = [
+		{
+			alias: 'ground',
+			src: '/terrainTiles_default.png',
+			data: { scaleMode: 'nearest' }
+		}
+	];
 
 	export let onCreateLobby: () => void;
 
@@ -28,7 +42,6 @@
 
 		const res = await fetch(`${getApiPath()}/map/generate/${arenaWidthTemp}/${arenaHeightTemp}`);
 		mapTiles = (await res.json()) as number[];
-		canvas.redraw();
 	}
 
 	function createLobby() {
@@ -56,18 +69,24 @@
 			let:width
 			let:tileSize
 		>
-			<Canvas {width} {height} pixelRatio="auto" class="bg-white" bind:this={canvas}>
-				{#each Array(arenaWidthTemp) as _, row}
-					{#each Array(arenaWidthTemp) as _, column}
-						<GroundTile
-							{tileSize}
-							tile={getTile(mapTiles, arenaWidthTemp, column, row)}
-							{column}
-							{row}
-						></GroundTile>
-					{/each}
-				{/each}
-			</Canvas>
+			<canvas bind:this={canvasContainer} />
+			{#if canvasContainer !== undefined && mapTiles.length > 0}
+				<Pixi
+					options={{
+						...options,
+						height,
+						width,
+						canvas: canvasContainer
+						// resizeTo: canvasContainer,
+					}}
+					dynHeight={height}
+					dynWidth={width}
+				>
+					<Assetloader bundleId="botbattle" {assets}>
+						<Ground {mapTiles} {tileSize} tileRows={arenaWidthTemp} />
+					</Assetloader>
+				</Pixi>
+			{/if}
 		</Arena>
 	</div>
 	<div class="flex flex-col h-full justify-between gap-2 p-6">
