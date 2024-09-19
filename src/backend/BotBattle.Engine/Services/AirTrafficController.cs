@@ -57,11 +57,12 @@ public static class AirTrafficController
         }
         else
         {
-            boardState.Airplane.Position.X += 1;
             if (boardState.Airplane.Position.Equals(boardState.Airplane.DroppingGiftPosition))
             {
                 boardState.Airplane.ParachuteStatus = ParachuteStatus.InAirHigh;
             }
+            
+            boardState.Airplane.Position.X += 1;
         }
     }
 }

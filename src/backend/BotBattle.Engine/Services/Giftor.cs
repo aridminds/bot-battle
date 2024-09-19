@@ -9,7 +9,7 @@ public static class Giftor
 {
     public static CollectibleItem? GetPossibleGiftType(BoardState boardState)
     {
-        if (Random.Shared.NextDouble() < .5d)
+        if (Random.Shared.NextDouble() < .005d)
         {
             var position = StartPositionService.SetStartPosition(boardState);
             if (position == null) return null;
