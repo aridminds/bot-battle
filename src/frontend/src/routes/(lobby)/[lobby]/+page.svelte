@@ -16,11 +16,17 @@
 	import Ground from '$lib/components/pixi/ground.svelte';
 	import ObstacleAsset from '$lib/components/pixi/obstacle.svelte';
 	import Assetloader from '$lib/components/pixi/assetloader.svelte';
+	import AirplaneAsset from '$lib/components/pixi/airplane.svelte';
 	import Pixi from '$lib/components/pixi/pixi.svelte';
+	import type { Airplane } from '$lib/types/airplane';
+	import type { CollectibleItem } from '$lib/types/collectibleItem';
+	import CollectibleItemAsset from '$lib/components/pixi/collectibleItem.svelte';
 
 	let tanks: Tank[] = [];
 	let bullets: Bullet[] = [];
 	let obstacles: Obstacle[] = [];
+	let collectibleItems: CollectibleItem[] = [];
+	let airplane: Airplane;
 	let canvasContainer;
 
 	const options: Partial<ApplicationOptions> = {
@@ -80,6 +86,26 @@
 			alias: 'oil-stain',
 			src: '/oilSpill_large.png',
 			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'airplane',
+			src: '/airplane.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'crate',
+			src: '/crate.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'parachute',
+			src: '/parachute.png',
+			data: { scaleMode: 'nearest' }
+		},
+		{
+			alias: 'airplaneShadow',
+			src: '/airplaneShadow.png',
+			data: { scaleMode: 'nearest' }
 		}
 	];
 
@@ -94,6 +120,8 @@
 		tanks = $boardState.Tanks;
 		bullets = $boardState.Bullets;
 		obstacles = $boardState.Obstacles;
+		collectibleItems = $boardState.CollectibleItems;
+		airplane = $boardState.Airplane;
 	};
 
 	async function updateBoardState() {
@@ -125,14 +153,20 @@
 						<Assetloader bundleId="botbattle" {assets}>
 							<Ground mapTiles={lobby.mapTiles} {tileSize} tileRows={lobby.width}>
 								{#each tanks as tankInfo (tankInfo.Name)}
-									<TankAsset {tankInfo} {tileSize} roundDuration={1000} />
+									<TankAsset {tankInfo} {tileSize} roundDuration={200} />
 								{/each}
 								{#each bullets as bullet (bullet.Id)}
-									<BulletAsset {bullet} {tileSize} roundDuration={1000} />
+									<BulletAsset {bullet} {tileSize} roundDuration={200} />
 								{/each}
 								{#each obstacles as obstacle}
 									<ObstacleAsset {tileSize} {obstacle} />
 								{/each}
+								{#each collectibleItems as collectibleItem (collectibleItem.Id)}
+									<CollectibleItemAsset {tileSize} {collectibleItem} />
+								{/each}
+								{#if airplane}
+									<AirplaneAsset {airplane} {tileSize} roundDuration={200} />
+								{/if}
 							</Ground>
 						</Assetloader>
 					</Pixi>

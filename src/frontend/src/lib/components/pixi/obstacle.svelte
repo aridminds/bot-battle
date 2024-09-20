@@ -15,7 +15,7 @@
 
 	setSprite(currentType);
 
-	getOrCreateLayer(1).addChild(sprite);
+	getOrCreateLayer(2).addChild(sprite);
 
 	function setSprite(type: ObstacleType) {
 		switch (type) {
@@ -51,7 +51,13 @@
 		}
 	}
 
-	$: if (currentType !== obstacle.Type) setSprite((currentType = obstacle.Type));
+	$: if (currentType !== obstacle.Type) {
+		setSprite((currentType = obstacle.Type));
+		if (currentType === ObstacleType.OilStain) {
+			sprite.removeFromParent();
+			getOrCreateLayer(1).addChild(sprite);
+		}
+	}
 </script>
 
 <span>Obstacle!</span>

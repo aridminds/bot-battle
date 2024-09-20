@@ -40,4 +40,10 @@ public class BoardState
     
     [Key(7)]
     public List<Obstacle> Obstacles { get; init; } = [];
+    
+    [Key(8)]
+    public List<CollectibleItem> CollectibleItems { get; init; } = [];
+
+    [Key(9)] 
+    public Airplane Airplane { get; init; } = new();
 }

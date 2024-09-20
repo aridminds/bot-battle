@@ -19,6 +19,7 @@ public class GameMaster
         boardState.Turns++;
 
         FireControlComputer.CheckBullets(boardState);
+        AirTrafficController.MoveAirplane(boardState);
 
         if (tank.WeaponSystem.ActiveFireCooldown > 0)
             tank.WeaponSystem = tank.WeaponSystem with
@@ -45,7 +46,8 @@ public class GameMaster
                 {
                     FireCooldown = t.WeaponSystem.FireCooldown,
                     ActiveFireCooldown = t.WeaponSystem.ActiveFireCooldown
-                }
+                },
+                Inventory = t.Inventory.Select(i => i).ToList()
             }).ToList(),
             Bullets = boardState.Bullets.Select(bullet => new BotBattle.AgentLib.Bullet
             {
@@ -79,7 +81,17 @@ public class GameMaster
                     X = obstacle.Position.X,
                     Y = obstacle.Position.Y
                 }
-            }).ToList()
+            }).ToList(),
+            CollectibleItems = boardState.CollectibleItems.Select(item => new BotBattle.AgentLib.CollectibleItem
+            {
+                Position = new BotBattle.AgentLib.Position
+                {
+                    X = item.Position.X,
+                    Y = item.Position.Y
+                },
+                Type = item.Type
+            }).ToList(),
+            
         });
 
         switch (tankAction.Action)
@@ -121,9 +133,41 @@ public class GameMaster
                 FireControlComputer.ShootBullet(shoot.Power, tank, boardState);
                 tank.WeaponSystem = tank.WeaponSystem with { ActiveFireCooldown = tank.WeaponSystem.FireCooldown };
                 break;
+            case UseItem useItem:
+                if (!tank.Inventory.Contains(useItem.ItemType))
+                {
+                    boardState.EventLogs.Add(new EventLog
+                        { Message = $"{tank.Name} tried to use an item but has no item.", Turn = boardState.Turns });
+                    break;
+                }
+
+                var item = tank.Inventory.First(i => i == useItem.ItemType);
+                switch (item)
+                {
+                    case CollectibleItemType.AdditionalRange:
+                        boardState.EventLogs.Add(EventLogExtensions.CreateHasUsedCollectibleEventLog(boardState.Turns, tank, CollectibleItemType.AdditionalRange));
+                        break;
+                    case CollectibleItemType.AdditionalPower:
+                        boardState.EventLogs.Add(EventLogExtensions.CreateHasUsedCollectibleEventLog(boardState.Turns, tank, CollectibleItemType.AdditionalPower));
+                        break;
+                    case CollectibleItemType.AdditionalHealth:
+                        boardState.EventLogs.Add(EventLogExtensions.CreateHasUsedCollectibleEventLog(boardState.Turns, tank, CollectibleItemType.AdditionalHealth));
+                        tank.Health += 100;
+                        break;
+                    case CollectibleItemType.AdditionalBullet:
+                        boardState.EventLogs.Add(EventLogExtensions.CreateHasUsedCollectibleEventLog(boardState.Turns, tank, CollectibleItemType.AdditionalBullet));
+                        break;
+                    case CollectibleItemType.AdditionalBulletBlast:
+                        boardState.EventLogs.Add(EventLogExtensions.CreateHasUsedCollectibleEventLog(boardState.Turns, tank, CollectibleItemType.AdditionalBulletBlast));
+                        break;
+                }
+
+                tank.Inventory.Remove(item);
+                break;
         }
 
         FireControlComputer.CalculateIsSomeoneHit(boardState);
+        Giftor.CheckForGift(boardState);
         CheckForWinner(boardState);
         ForestRanger.GrowUpTrees(boardState);
     }

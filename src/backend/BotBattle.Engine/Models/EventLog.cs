@@ -37,6 +37,33 @@ public static class EventLogExtensions
         };
     }
 
+    public static EventLog CreateHasUsedCollectibleEventLog(int turn, Tank tank, CollectibleItemType collectibleItemType)
+    {
+        return new EventLog
+        {
+            Message = $"{tank.Name} has used {collectibleItemType}",
+            Turn = turn
+        };
+    }
+    
+    public static EventLog CreateHasHasCollectedEventLog(int turn, Tank tank, CollectibleItemType collectibleItemType)
+    {
+        return new EventLog
+        {
+            Message = $"{tank.Name} has collected {collectibleItemType}",
+            Turn = turn
+        };
+    }
+    
+    public static EventLog CreatePlainHasStartedEventLog(int turn)
+    {
+        return new EventLog
+        {
+            Message = "The plane has taken off",
+            Turn = turn
+        };
+    }
+    
     public static EventLog CreateHasWonEventLog(int turn, Tank winner)
     {
         return new EventLog

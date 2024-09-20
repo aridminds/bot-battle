@@ -11,4 +11,5 @@ public class Tank
     public int PointRegister { get; set; } = 0;
     public int DiedInTurn { get; set; } = -1;
     public WeaponSystem WeaponSystem { get; set; }
+    public List<CollectibleItemType> Inventory { get; set; } = [];
 }
